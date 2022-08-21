@@ -52,7 +52,7 @@ helm upgrade ${otelcollector[name]} \
   --set name=${otelcollector[name]} \
   --set namespace=${otelcollector[namespace]} \
   --set port=${otelcollector[port]} \
-  "../charts/newrelic-otelcollector"
+  "../charts/otelcollector"
 #########
 
 ##################
