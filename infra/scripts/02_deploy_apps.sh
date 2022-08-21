@@ -16,14 +16,25 @@ otelcollector["port"]=4318
 declare -A fluentbit
 fluentbit["name"]="fluentbit"
 fluentbit["namespace"]="monitoring"
-fluentbit["port"]=8006
+
+# Prometheus
+declare -A prometheus
+prometheus["name"]="prometheus"
+prometheus["namespace"]="monitoring"
 
 ### Java ###
+
 # First
 declare -A javafirst
 javafirst["name"]="java-first"
 javafirst["namespace"]="java"
 javafirst["port"]=8080
+
+# Second
+declare -A javasecond
+javasecond["name"]="java-second"
+javasecond["namespace"]="java"
+javasecond["port"]=8080
 #########
 
 ####################
@@ -37,6 +48,12 @@ docker build \
   --tag "${DOCKERHUB_NAME}/${javafirst[name]}" \
   "../../apps/java-first/."
 docker push "${DOCKERHUB_NAME}/${javafirst[name]}"
+
+# Second
+docker build \
+  --tag "${DOCKERHUB_NAME}/${javasecond[name]}" \
+  "../../apps/java-second/."
+docker push "${DOCKERHUB_NAME}/${javasecond[name]}"
 #######
 
 ######################
@@ -68,9 +85,27 @@ helm upgrade ${fluentbit[name]} \
   "../charts/fluentbit"
 #########
 
-#################
-### Java Apps ###
-#################
+##################
+### Prometheus ###
+##################
+helm dependency update "../charts/prometheus"
+helm upgrade prometheus \
+  --install \
+  --wait \
+  --debug \
+  --create-namespace \
+  --namespace ${prometheus[namespace]} \
+  --set namespace=${prometheus[namespace]} \
+  --set server.remoteWrite[0].url="https://metric-api.eu.newrelic.com/prometheus/v1/write?prometheus_server=${prometheus[name]}" \
+  --set server.remoteWrite[0].bearer_token=$NEWRELIC_LICENSE_KEY \
+  --set server.remoteWrite[0].write_relabel_configs[0].source_labels[0]="namespace" \
+  --set server.remoteWrite[0].write_relabel_configs[0].regex=${javafirst[namespace]} \
+  --set server.remoteWrite[0].write_relabel_configs[0].action="keep" \
+  "../charts/prometheus"
+
+# #################
+# ### Java Apps ###
+# #################
 
 # First
 helm upgrade ${javafirst[name]} \
@@ -84,4 +119,17 @@ helm upgrade ${javafirst[name]} \
   --set namespace=${javafirst[namespace]} \
   --set port=${javafirst[port]} \
   "../charts/java-first"
+
+# Second
+helm upgrade ${javasecond[name]} \
+  --install \
+  --wait \
+  --debug \
+  --create-namespace \
+  --namespace ${javasecond[namespace]} \
+  --set dockerhubName=$DOCKERHUB_NAME \
+  --set name=${javasecond[name]} \
+  --set namespace=${javasecond[namespace]} \
+  --set port=${javasecond[port]} \
+  "../charts/java-second"
 #########
