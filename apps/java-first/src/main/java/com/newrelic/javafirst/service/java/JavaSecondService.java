@@ -28,15 +28,14 @@ public class JavaSecondService {
 
         var response = makeRequestToJavaSecondService(requestDto);
 
-        logger.info("Request to persistence service is performed.");
+        logger.info("Request to java second service is performed.");
         return response;
     }
 
     private ResponseEntity<ResponseDto> makeRequestToJavaSecondService(
             RequestDto requestDto
     ) {
-        var url = "http://second.java.svc.cluster.local:8080/java" +
-                requestDto.getMessage();
+        var url = "http://java-second.java.svc.cluster.local:8080/java";
 
         var headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
