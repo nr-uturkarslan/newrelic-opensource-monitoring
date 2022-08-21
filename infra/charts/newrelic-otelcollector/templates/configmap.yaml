@@ -22,6 +22,8 @@ data:
             endpoint: 0.0.0.0:4317
           http:
             endpoint: 0.0.0.0:4318
+      fluentforward:
+        endpoint: 0.0.0.0:8006
     processors:
       batch: {}
       memory_limiter:
@@ -49,13 +51,20 @@ data:
       - memory_ballast
       pipelines:
         traces:
-          exporters:
-          - logging
+          receivers:
           - otlp
           processors:
           - memory_limiter
           - batch
+          exporters:
+          - logging
+          - otlp
+        logs:
           receivers:
+          - fluentforward
+          processors:
+          - batch
+          exporters:
           - otlp
       telemetry:
         metrics:

@@ -44,6 +44,9 @@ spec:
             - name: otlp-http
               containerPort: 4318
               protocol: TCP
+            - name: fluentforward
+              containerPort: 8006
+              protocol: TCP
           env:
             - name: MY_POD_IP
               valueFrom:

@@ -9,11 +9,16 @@
 # Otel Collector
 declare -A otelcollector
 otelcollector["name"]="otelcollector"
-otelcollector["namespace"]="otel"
+otelcollector["namespace"]="monitoring"
 otelcollector["port"]=4318
 
-### Java ###
+# Fluent Bit
+declare -A fluentbit
+fluentbit["name"]="fluentbit"
+fluentbit["namespace"]="monitoring"
+fluentbit["port"]=8006
 
+### Java ###
 # First
 declare -A javafirst
 javafirst["name"]="java-first"
@@ -43,12 +48,24 @@ helm upgrade ${otelcollector[name]} \
   --debug \
   --create-namespace \
   --namespace ${otelcollector[namespace]} \
-  --set dockerhubName=$DOCKERHUB_NAME \
   --set newRelicLicenseKey=$NEWRELIC_LICENSE_KEY \
   --set name=${otelcollector[name]} \
   --set namespace=${otelcollector[namespace]} \
   --set port=${otelcollector[port]} \
   "../charts/newrelic-otelcollector"
+#########
+
+##################
+### Fluent Bit ###
+##################
+helm upgrade ${fluentbit[name]} \
+  --install \
+  --wait \
+  --debug \
+  --create-namespace \
+  --namespace ${fluentbit[namespace]} \
+  --set namespace=${fluentbit[namespace]} \
+  "../charts/fluentbit"
 #########
 
 #################
