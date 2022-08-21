@@ -47,6 +47,7 @@ Create the name of the service account to use
 {{- end -}}
 {{- end -}}
 
+
 {{/*
 Create the name of the fluent bit config
 */}}
@@ -55,24 +56,18 @@ Create the name of the fluent bit config
 {{- end -}}
 
 {{/*
-Return the licenseKeyAlpha
+Return the licenseKey
 */}}
-{{- define "newrelic-logging.licenseKeyAlpha" -}}
-{{- .Values.licenseKeyAlpha | default "" -}}
+{{- define "newrelic-logging.licenseKey" -}}
+{{- if .Values.global}}
+  {{- if .Values.global.licenseKey }}
+      {{- .Values.global.licenseKey -}}
+  {{- else -}}
+      {{- .Values.licenseKey | default "" -}}
+  {{- end -}}
+{{- else -}}
+    {{- .Values.licenseKey | default "" -}}
 {{- end -}}
-
-{{/*
-Return the licenseKeyBravo
-*/}}
-{{- define "newrelic-logging.licenseKeyBravo" -}}
-{{- .Values.licenseKeyBravo | default "" -}}
-{{- end -}}
-
-{{/*
-Return the licenseKeyCharlie
-*/}}
-{{- define "newrelic-logging.licenseKeyCharlie" -}}
-{{- .Values.licenseKeyCharlie | default "" -}}
 {{- end -}}
 
 {{/*
@@ -177,4 +172,14 @@ Returns lowDataMode
   {{- end -}}
 {{- end -}}
 {{- end -}}
+{{- end -}}
+
+{{/*
+Returns if the template should render, it checks if the required values are set.
+*/}}
+{{- define "newrelic-logging.areValuesValid" -}}
+{{- $licenseKey := include "newrelic-logging.licenseKey" . -}}
+{{- $customSecretName := include "newrelic-logging.customSecretName" . -}}
+{{- $customSecretKey := include "newrelic-logging.customSecretKey" . -}}
+{{- and (or $licenseKey (and $customSecretName $customSecretKey))}}
 {{- end -}}

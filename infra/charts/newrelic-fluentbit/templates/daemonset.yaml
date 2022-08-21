@@ -1,4 +1,3 @@
-{{- if .Values.enableLinux }}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -53,9 +52,27 @@ spec:
           imagePullPolicy: "{{ .Values.image.pullPolicy }}"
           env:
             - name: ENDPOINT
+              {{- if (include "newrelic.nrStaging" .) }}
+              value: "https://staging-log-api.newrelic.com/log/v1"
+              {{- else if .Values.endpoint }}
               value: {{ .Values.endpoint }}
+              {{- else if eq (substr 0 2 (include "newrelic-logging.licenseKey" .)) "eu" }}
+              value: "https://log-api.eu.newrelic.com/log/v1"
+              {{- else }}
+              value: "https://log-api.newrelic.com/log/v1"
+              {{- end }}
             - name: SOURCE
               value: {{ if (include "newrelic-logging.lowDataMode" .) }} "k8s" {{- else }} "kubernetes" {{- end }}
+            - name: LICENSE_KEY
+              valueFrom:
+                secretKeyRef:
+                  {{- if (include "newrelic-logging.licenseKey" .) }}
+                  name: {{ template "newrelic-logging.fullname" . }}-config
+                  key: license
+                  {{- else }}
+                  name: {{ include "newrelic-logging.customSecretName" . }}
+                  key: {{ include "newrelic-logging.customSecretKey" . }}
+                  {{- end }}
             - name: CLUSTER_NAME
               value: {{ include "newrelic-logging.cluster" . }}
             - name: LOG_LEVEL
@@ -68,40 +85,8 @@ spec:
               {{- end }}
             - name: FB_DB
               value: {{ .Values.fluentBit.db | quote }}
-
-            # Alpha
-            - name: LICENSE_KEY_ALPHA
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "newrelic-logging.fullname" . }}-config-alpha
-                  key: license-alpha
-            - name: NAMESPACE_ALPHA
-              value: {{ .Values.fluentBit.namespaceAlpha | quote }}
-            - name: PATH_ALPHA
-              value: {{ .Values.fluentBit.pathAlpha | quote }}
-
-            # Bravo
-            - name: LICENSE_KEY_BRAVO
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "newrelic-logging.fullname" . }}-config-bravo
-                  key: license-bravo
-            - name: NAMESPACE_BRAVO
-              value: {{ .Values.fluentBit.namespaceBravo | quote }}
-            - name: PATH_BRAVO
-              value: {{ .Values.fluentBit.pathBravo | quote }}
-
-            # Charlie
-            - name: LICENSE_KEY_CHARLIE
-              valueFrom:
-                secretKeyRef:
-                  name: {{ template "newrelic-logging.fullname" . }}-config-charlie
-                  key: license-charlie
-            - name: NAMESPACE_CHARLIE
-              value: {{ .Values.fluentBit.namespaceCharlie | quote }}
-            - name: PATH_CHARLIE
-              value: {{ .Values.fluentBit.pathCharlie | quote }}
-
+            - name: PATH
+              value: {{ .Values.fluentBit.path | quote }}
             - name: K8S_BUFFER_SIZE
               value: {{ .Values.fluentBit.k8sBufferSize | quote }}
             - name: K8S_LOGGING_EXCLUDE
@@ -165,4 +150,3 @@ spec:
       tolerations:
 {{ toYaml .Values.tolerations | indent 8 }}
       {{- end }}
-{{- end }}

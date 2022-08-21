@@ -16,5 +16,4 @@ keywords:
 dependencies:
   - name: common-library
     version: 1.0.4
-    repository: "file://../nri-common-library"
-    # repository: "https://helm-charts.newrelic.com"
+    repository: "https://helm-charts.newrelic.com"

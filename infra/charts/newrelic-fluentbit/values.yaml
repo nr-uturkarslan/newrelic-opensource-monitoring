@@ -26,18 +26,8 @@
 
 fluentBit:
   logLevel: "info"
-
-  namespaceAlpha: alpha
-  namespaceBravo: bravo
-  namespaceCharlie: charlie
-
   path: "/var/log/containers/*.log"
-  pathAlpha: "/var/log/containers/*alpha*.log"
-  pathBravo: "/var/log/containers/*bravo*.log"
-  pathCharlie: "/var/log/containers/*charlie*.log"
-
   windowsPath: "C:\\var\\log\\containers\\*.log"
-
   db: "/var/log/flb_kube.db"
   windowsDb: "C:\\var\\log\\flb_kube.db"
   criEnabled: false
@@ -65,34 +55,8 @@ fluentBit:
     inputs: |
       [INPUT]
           Name              tail
-          Tag               ${NAMESPACE_ALPHA}.*
-          # Tag               kube.<namespace_name>.<pod_name>.<container_name>
-          # Tag_Regex         (?<pod_name>[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*)_(?<namespace_name>[^_]+)_(?<container_name>.+)
-          Path              ${PATH_ALPHA}
-          Parser            ${LOG_PARSER}
-          DB                ${FB_DB}
-          Mem_Buf_Limit     7MB
-          Skip_Long_Lines   On
-          Refresh_Interval  10
-
-      [INPUT]
-          Name              tail
-          Tag               ${NAMESPACE_BRAVO}.*
-          # Tag               kube.<namespace_name>.<pod_name>.<container_name>
-          # Tag_Regex         (?<pod_name>[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*)_(?<namespace_name>[^_]+)_(?<container_name>.+)
-          Path              ${PATH_BRAVO}
-          Parser            ${LOG_PARSER}
-          DB                ${FB_DB}
-          Mem_Buf_Limit     7MB
-          Skip_Long_Lines   On
-          Refresh_Interval  10
-
-      [INPUT]
-          Name              tail
-          Tag               ${NAMESPACE_CHARLIE}.*
-          # Tag               kube.<namespace_name>.<pod_name>.<container_name>
-          # Tag_Regex         (?<pod_name>[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*)_(?<namespace_name>[^_]+)_(?<container_name>.+)
-          Path              ${PATH_CHARLIE}
+          Tag               kube.*
+          Path              ${PATH}
           Parser            ${LOG_PARSER}
           DB                ${FB_DB}
           Mem_Buf_Limit     7MB
@@ -102,110 +66,52 @@ fluentBit:
     filters: |
       [FILTER]
           Name                kubernetes
-          Match               ${NAMESPACE_ALPHA}.*
+          Match               kube.*
           # We need the full DNS suffix as Windows only supports resolving names with this suffix
           # See: https://kubernetes.io/docs/setup/production-environment/windows/intro-windows-in-kubernetes/#dns-limitations
           Kube_URL            https://kubernetes.default.svc.cluster.local:443
           Buffer_Size         ${K8S_BUFFER_SIZE}
           K8S-Logging.Exclude ${K8S_LOGGING_EXCLUDE}
-          Merge_Log           On
-          Merge_Log_Key       log_processed
-          Labels              On
-          Annotations         On
-          # Kube_Tag_Prefix     ${NAMESPACE_ALPHA}.var.log.containers.
-          K8S-Logging.Parser  Off
-          Regex_Parser        kube-custom
-
-      [FILTER]
-          Name                kubernetes
-          Match               ${NAMESPACE_BRAVO}.*
-          # We need the full DNS suffix as Windows only supports resolving names with this suffix
-          # See: https://kubernetes.io/docs/setup/production-environment/windows/intro-windows-in-kubernetes/#dns-limitations
-          Kube_URL            https://kubernetes.default.svc.cluster.local:443
-          Buffer_Size         ${K8S_BUFFER_SIZE}
-          K8S-Logging.Exclude ${K8S_LOGGING_EXCLUDE}
-          Merge_Log           On
-          Merge_Log_Key       log_processed
-          Labels              On
-          Annotations         On
-          # Kube_Tag_Prefix     ${NAMESPACE_BRAVO}.var.log.containers.
-          K8S-Logging.Parser  Off
-          Regex_Parser        kube-custom
-
-      [FILTER]
-          Name                kubernetes
-          Match               ${NAMESPACE_CHARLIE}.*
-          # We need the full DNS suffix as Windows only supports resolving names with this suffix
-          # See: https://kubernetes.io/docs/setup/production-environment/windows/intro-windows-in-kubernetes/#dns-limitations
-          Kube_URL            https://kubernetes.default.svc.cluster.local:443
-          Buffer_Size         ${K8S_BUFFER_SIZE}
-          K8S-Logging.Exclude ${K8S_LOGGING_EXCLUDE}
-          Merge_Log           On
-          Merge_Log_Key       log_processed
-          Labels              On
-          Annotations         On
-          # Kube_Tag_Prefix     ${NAMESPACE_CHARLIE}.var.log.containers.
-          K8S-Logging.Parser  Off
-          Regex_Parser        kube-custom
 
       [FILTER]
           Name           record_modifier
           Match          *
           Record         cluster_name ${CLUSTER_NAME}
 
-      # [FILTER]
-      #     Name          rewrite_tag
-      #     Match         kube.*
-      #     Rule          $kubernetes['namespace_name'] ^(.*)$ test.$0 false
+    lowDataModeFilters: |
+      [FILTER]
+          Name           kubernetes
+          Match          kube.*
+          # We need the full DNS suffix as Windows only supports resolving names with this suffix
+          # See: https://kubernetes.io/docs/setup/production-environment/windows/intro-windows-in-kubernetes/#dns-limitations
+          Kube_URL       https://kubernetes.default.svc.cluster.local:443
+          Buffer_Size    ${K8S_BUFFER_SIZE}
+          K8S-Logging.Exclude ${K8S_LOGGING_EXCLUDE}
+          Labels         Off
+          Annotations    Off
 
-    # lowDataModeFilters: |
-    #   [FILTER]
-    #       Name           kubernetes
-    #       Match          kube.*
-    #       # We need the full DNS suffix as Windows only supports resolving names with this suffix
-    #       # See: https://kubernetes.io/docs/setup/production-environment/windows/intro-windows-in-kubernetes/#dns-limitations
-    #       Kube_URL       https://kubernetes.default.svc.cluster.local:443
-    #       Buffer_Size    ${K8S_BUFFER_SIZE}
-    #       K8S-Logging.Exclude ${K8S_LOGGING_EXCLUDE}
-    #       Labels         Off
-    #       Annotations    Off
+      [FILTER]
+          Name           nest
+          Match          *
+          Operation      lift
+          Nested_under   kubernetes
 
-    #   [FILTER]
-    #       Name           nest
-    #       Match          *
-    #       Operation      lift
-    #       Nested_under   kubernetes
-
-    #   [FILTER]
-    #       Name           record_modifier
-    #       Match          *
-    #       Record         cluster_name ${CLUSTER_NAME}
-    #       Allowlist_key  container_name
-    #       Allowlist_key  namespace_name
-    #       Allowlist_key  pod_name
-    #       Allowlist_key  stream
-    #       Allowlist_key  message
-    #       Allowlist_key  log
+      [FILTER]
+          Name           record_modifier
+          Match          *
+          Record         cluster_name ${CLUSTER_NAME}
+          Allowlist_key  container_name
+          Allowlist_key  namespace_name
+          Allowlist_key  pod_name
+          Allowlist_key  stream
+          Allowlist_key  message
+          Allowlist_key  log
 
     outputs: |
       [OUTPUT]
           Name           newrelic
-          Match          ${NAMESPACE_ALPHA}.*
-          licenseKey     ${LICENSE_KEY_ALPHA}
-          endpoint       ${ENDPOINT}
-          lowDataMode    ${LOW_DATA_MODE}
-
-      [OUTPUT]
-          Name           newrelic
-          Match          ${NAMESPACE_BRAVO}.*
-          licenseKey     ${LICENSE_KEY_BRAVO}
-          endpoint       ${ENDPOINT}
-          lowDataMode    ${LOW_DATA_MODE}
-
-      [OUTPUT]
-          Name           newrelic
-          Match          ${NAMESPACE_CHARLIE}.*
-          licenseKey     ${LICENSE_KEY_CHARLIE}
+          Match          *
+          licenseKey     ${LICENSE_KEY}
           endpoint       ${ENDPOINT}
           lowDataMode    ${LOW_DATA_MODE}
 
@@ -223,11 +129,6 @@ fluentBit:
           Regex ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<message>.*)$
           Time_Key    time
           Time_Format %Y-%m-%dT%H:%M:%S.%L%z
-
-      [PARSER]
-          Name    kube-custom
-          Format  regex
-          Regex   (?<tag>[^.]+)?\.?(?<pod_name>[a-z0-9](?:[-a-z0-9]*[a-z0-9])?(?:\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*)_(?<namespace_name>[^_]+)_(?<container_name>.+)-(?<docker_id>[a-z0-9]{64})\.log$
 
 image:
   repository: newrelic/newrelic-fluentbit-output
