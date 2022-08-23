@@ -15,16 +15,16 @@ spec:
   type: ClusterIP
   ports:
     - name: otlp
-      port: 4317
+      port: {{ .Values.grpcPort }}
       targetPort: otlp
       protocol: TCP
     - name: otlp-http
-      port: 4318
+      port: {{ .Values.httpPort }}
       targetPort: otlp-http
       protocol: TCP
     - name: fluentforward
-      port: 8006
-      targetPort: 8006
+      port: {{ .Values.fluentPort }}
+      targetPort: {{ .Values.fluentPort }}
       protocol: TCP
   selector:
     app.kubernetes.io/name: opentelemetry-collector

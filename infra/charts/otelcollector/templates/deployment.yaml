@@ -39,13 +39,13 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - name: otlp
-              containerPort: 4317
+              containerPort: {{ .Values.grpcPort }}
               protocol: TCP
             - name: otlp-http
-              containerPort: 4318
+              containerPort: {{ .Values.httpPort }}
               protocol: TCP
             - name: fluentforward
-              containerPort: 8006
+              containerPort: {{ .Values.fluentPort }}
               protocol: TCP
           env:
             - name: MY_POD_IP

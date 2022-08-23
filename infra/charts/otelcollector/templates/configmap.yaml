@@ -19,11 +19,11 @@ data:
       otlp:
         protocols:
           grpc:
-            endpoint: 0.0.0.0:4317
+            endpoint: 0.0.0.0:{{ .Values.grpcPort }}
           http:
-            endpoint: 0.0.0.0:4318
+            endpoint: 0.0.0.0:{{ .Values.httpPort }}
       fluentforward:
-        endpoint: 0.0.0.0:8006
+        endpoint: 0.0.0.0:{{ .Values.fluentPort }}
     processors:
       batch: {}
       memory_limiter:
@@ -37,12 +37,15 @@ data:
             # but New Relic conventions expects the fields to be dot delimited trace.id and span.id. We
             # use the transform processor to replace trace_id => trace.id, span_id => span.id.
             # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/README.md#trace-context-in-legacy-formats
-            - replace_pattern(body, "\"trace_id\":", "\"trace.id\":")
-            - replace_pattern(body, "\"span_id\":", "\"span.id\":")
+            # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/transformprocessor
+            # https://github.com/newrelic/newrelic-opentelemetry-examples/tree/main/java/logs-in-context-log4j2
+            # - replace_pattern(resource.attributes, "\"trace_id\":", "\"trace.id\":")
+            # - replace_all_patterns(resource.attributes, "span_id", "span.id")
+            - replace_pattern(body, "level", "test")
     exporters:
       logging: {}
       otlp:
-        endpoint: https://otlp.eu01.nr-data.net:4317
+        endpoint: {{ .Values.newRelicOtlpGrpcEndpoint }}
         headers:
           api-key: {{ .Values.newRelicLicenseKey }}
     service:
@@ -63,6 +66,7 @@ data:
           receivers:
           - fluentforward
           processors:
+          - transform
           - batch
           exporters:
           - otlp

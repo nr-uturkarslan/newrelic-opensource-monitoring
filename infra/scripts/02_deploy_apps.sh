@@ -5,12 +5,15 @@
 ##################
 
 ### Set variables
+newRelicOtlpGrpcEndpoint="https://otlp.eu01.nr-data.net:4317"
 
 # Otel Collector
 declare -A otelcollector
 otelcollector["name"]="otelcollector"
 otelcollector["namespace"]="monitoring"
-otelcollector["port"]=4318
+otelcollector["grpcPort"]=4317
+otelcollector["httpPort"]=4318
+otelcollector["fluentPort"]=8006
 
 # Fluent Bit
 declare -A fluentbit
@@ -45,12 +48,14 @@ javasecond["port"]=8080
 
 # First
 docker build \
+  --build-arg otelExporterOtlpEndpoint="http://${otelcollector[name]}.${otelcollector[namespace]}.svc.cluster.local:${otelcollector[grpcPort]}" \
   --tag "${DOCKERHUB_NAME}/${javafirst[name]}" \
   "../../apps/java-first/."
 docker push "${DOCKERHUB_NAME}/${javafirst[name]}"
 
 # Second
 docker build \
+  --build-arg otelExporterOtlpEndpoint="http://${otelcollector[name]}.${otelcollector[namespace]}.svc.cluster.local:${otelcollector[grpcPort]}" \
   --tag "${DOCKERHUB_NAME}/${javasecond[name]}" \
   "../../apps/java-second/."
 docker push "${DOCKERHUB_NAME}/${javasecond[name]}"
@@ -68,7 +73,10 @@ helm upgrade ${otelcollector[name]} \
   --set newRelicLicenseKey=$NEWRELIC_LICENSE_KEY \
   --set name=${otelcollector[name]} \
   --set namespace=${otelcollector[namespace]} \
-  --set port=${otelcollector[port]} \
+  --set grpcPort=${otelcollector[grpcPort]} \
+  --set httpPort=${otelcollector[httpPort]} \
+  --set fluentPort=${otelcollector[fluentPort]} \
+  --set newRelicOtlpGrpcEndpoint=$newRelicOtlpGrpcEndpoint \
   "../charts/otelcollector"
 #########
 
@@ -103,9 +111,9 @@ helm upgrade prometheus \
   --set server.remoteWrite[0].write_relabel_configs[0].action="keep" \
   "../charts/prometheus"
 
-# #################
-# ### Java Apps ###
-# #################
+#################
+### Java Apps ###
+#################
 
 # First
 helm upgrade ${javafirst[name]} \
