@@ -14,6 +14,7 @@ otelcollector["namespace"]="monitoring"
 otelcollector["grpcPort"]=4317
 otelcollector["httpPort"]=4318
 otelcollector["fluentPort"]=8006
+otelcollector["grpcEndpoint"]="http://${otelcollector[name]}.${otelcollector[namespace]}.svc.cluster.local:${otelcollector[grpcPort]}"
 
 # Fluent Bit
 declare -A fluentbit
@@ -48,14 +49,14 @@ javasecond["port"]=8080
 
 # First
 docker build \
-  --build-arg otelExporterOtlpEndpoint="http://${otelcollector[name]}.${otelcollector[namespace]}.svc.cluster.local:${otelcollector[grpcPort]}" \
+  --build-arg otelExporterOtlpEndpoint=${otelcollector[grpcEndpoint]} \
   --tag "${DOCKERHUB_NAME}/${javafirst[name]}" \
   "../../apps/java-first/."
 docker push "${DOCKERHUB_NAME}/${javafirst[name]}"
 
 # Second
 docker build \
-  --build-arg otelExporterOtlpEndpoint="http://${otelcollector[name]}.${otelcollector[namespace]}.svc.cluster.local:${otelcollector[grpcPort]}" \
+  --build-arg otelExporterOtlpEndpoint=${otelcollector[grpcEndpoint]} \
   --tag "${DOCKERHUB_NAME}/${javasecond[name]}" \
   "../../apps/java-second/."
 docker push "${DOCKERHUB_NAME}/${javasecond[name]}"
