@@ -62,6 +62,29 @@ docker build \
 docker push "${DOCKERHUB_NAME}/${javasecond[name]}"
 #######
 
+#############
+### Pixie ###
+#############
+helm repo add newrelic https://helm-charts.newrelic.com && helm repo update
+helm upgrade "newrelic-bundle newrelic/nri-bundle" \
+  --install \
+  --wait \
+  --debug \
+  --set global.licenseKey=$NEWRELIC_LICENSE_KEY \
+  --set global.cluster=test \
+  --namespace="newrelic "\
+  --create-namespace \
+  --set newrelic-infrastructure.privileged=true \
+  --set global.lowDataMode=true \
+  --set ksm.enabled=true \
+  --set kubeEvents.enabled=true \
+  --set newrelic-pixie.enabled=true \
+  --set newrelic-pixie.apiKey=$PIXIE_API_KEY \
+  --set pixie-chart.enabled=true \
+  --set pixie-chart.deployKey=$PIXIE_DEPLOY_KEY \
+  --set pixie-chart.clusterName=test 
+#########
+
 ######################
 ### Otel Collector ###
 ######################
