@@ -7,7 +7,7 @@ resource "azurerm_kubernetes_cluster" "platform" {
   location            = azurerm_resource_group.platform.location
 
   dns_prefix         = var.platform
-  kubernetes_version = "1.23.5"
+  kubernetes_version = "1.24.0"
 
   node_resource_group = var.project_kubernetes_cluster_nodepool_name
 
