@@ -112,11 +112,11 @@ key=''"'${stageShort}${instance}.tfstate'"''' \
 > ../terraform/01_platform/backend.config
 
 # Initialise Terraform
-terraform -chdir=../terraform/01_platform init \
+terraform -chdir=../terraform/01_platform_aks init \
   --backend-config="./backend.config"
 
 # Plan Terraform
-terraform -chdir=../terraform/01_platform plan \
+terraform -chdir=../terraform/01_platform_aks plan \
   -var project=$project \
   -var location_long=$locationLong \
   -var location_short=$locationShort \
@@ -129,7 +129,7 @@ terraform -chdir=../terraform/01_platform plan \
   -out "./tfplan"
 
 # Apply Terraform
-terraform -chdir=../terraform/01_platform apply tfplan
+terraform -chdir=../terraform/01_platform_aks apply tfplan
 
 # Get AKS credentials
 az aks get-credentials \

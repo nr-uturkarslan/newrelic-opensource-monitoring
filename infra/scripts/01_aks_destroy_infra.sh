@@ -25,7 +25,7 @@ projectAksNodepoolResourceGroupName="aksrg${project}${locationShort}${platform}$
 
 ### Terraform destroy
 
-terraform -chdir=../terraform/01_platform destroy \
+terraform -chdir=../terraform/01_platform_aks destroy \
   -var project=$project \
   -var location_long=$locationLong \
   -var location_short=$locationShort \
