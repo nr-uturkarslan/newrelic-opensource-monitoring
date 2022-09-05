@@ -6,5 +6,5 @@
 
 kind create cluster \
   --name test \
-  --config kind-config.yaml \
+  --config ./helpers/kind-config.yaml \
   --image=kindest/node:v1.24.0
