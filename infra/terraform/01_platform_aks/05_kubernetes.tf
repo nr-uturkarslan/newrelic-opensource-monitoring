@@ -6,7 +6,7 @@ resource "azurerm_kubernetes_cluster" "platform" {
   resource_group_name = azurerm_resource_group.platform.name
   location            = azurerm_resource_group.platform.location
 
-  dns_prefix         = "${var.project_kubernetes_cluster_name}-${azurerm_resource_group.nr1.name}"
+  dns_prefix         = "${var.project_kubernetes_cluster_name}-${azurerm_resource_group.platform.name}"
   kubernetes_version = var.kubernetes_version
 
   node_resource_group = var.project_kubernetes_cluster_nodepool_name
