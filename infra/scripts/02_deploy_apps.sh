@@ -84,25 +84,24 @@ docker build \
   "../../apps/java-second/."
 docker push "${DOCKERHUB_NAME}/${javasecond[name]}"
 
-### Simulator ###
-docker build \
-  --tag "${DOCKERHUB_NAME}/${simulator[imageName]}" \
-  "../../apps/simulator/."
-docker push "${DOCKERHUB_NAME}/${simulator[imageName]}"
-#######
+# ### Simulator ###
+# docker build \
+#   --tag "${DOCKERHUB_NAME}/${simulator[name]}" \
+#   "../../apps/simulator/."
+# docker push "${DOCKERHUB_NAME}/${simulator[name]}"
+# #######
 
 #############
 ### Pixie ###
 #############
-helm repo add newrelic https://helm-charts.newrelic.com && helm repo update
-helm upgrade "newrelic-bundle newrelic/nri-bundle" \
+helm repo add newrelic https://helm-charts.newrelic.com && helm repo update && \
+kubectl create namespace "monitoring" ; helm upgrade newrelic-bundle newrelic/nri-bundle \
   --install \
   --wait \
   --debug \
   --set global.licenseKey=$NEWRELIC_LICENSE_KEY \
   --set global.cluster=$clusterName \
-  --namespace="monitoring "\
-  --create-namespace \
+  --namespace="monitoring" \
   --set newrelic-infrastructure.privileged=true \
   --set global.lowDataMode=true \
   --set ksm.enabled=true \
@@ -195,21 +194,21 @@ helm upgrade ${javasecond[name]} \
   "../charts/java-second"
 #########
 
-#################
-### Simulator ###
-#################
+# #################
+# ### Simulator ###
+# #################
 
-# Simulator
-helm upgrade ${simulator[name]} \
-  --install \
-  --wait \
-  --debug \
-  --create-namespace \
-  --namespace ${simulator[namespace]} \
-  --set dockerhubName=$DOCKERHUB_NAME \
-  --set name=${simulator[name]} \
-  --set imageName=${simulator[imageName]} \
-  --set namespace=${simulator[namespace]} \
-  --set port=${simulator[port]} \
-  "../charts/simulator"
-#########
+# # Simulator
+# helm upgrade ${simulator[name]} \
+#   --install \
+#   --wait \
+#   --debug \
+#   --create-namespace \
+#   --namespace ${simulator[namespace]} \
+#   --set dockerhubName=$DOCKERHUB_NAME \
+#   --set name=${simulator[name]} \
+#   --set imageName=${simulator[name]} \
+#   --set namespace=${simulator[namespace]} \
+#   --set port=${simulator[port]} \
+#   "../charts/simulator"
+# #########
