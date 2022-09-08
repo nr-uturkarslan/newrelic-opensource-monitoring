@@ -1,0 +1,4 @@
+name: simulator
+imageName: simulator
+namespace: simulator
+port: 8080

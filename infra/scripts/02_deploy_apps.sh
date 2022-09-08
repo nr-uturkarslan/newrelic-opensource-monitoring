@@ -56,6 +56,12 @@ declare -A javasecond
 javasecond["name"]="java-second"
 javasecond["namespace"]="java"
 javasecond["port"]=8080
+
+### Simulator ###
+declare -A simulator
+simulator["name"]="simulator"
+simulator["namespace"]="simulator"
+simulator["port"]=8080
 #########
 
 ####################
@@ -181,4 +187,23 @@ helm upgrade ${javasecond[name]} \
   --set namespace=${javasecond[namespace]} \
   --set port=${javasecond[port]} \
   "../charts/java-second"
+#########
+
+#################
+### Simulator ###
+#################
+
+# Simulator
+helm upgrade ${simulator[name]} \
+  --install \
+  --wait \
+  --debug \
+  --create-namespace \
+  --namespace ${simulator[namespace]} \
+  --set dockerhubName=$DOCKERHUB_NAME \
+  --set name=${simulator[name]} \
+  --set imageName=${simulator[imageName]} \
+  --set namespace=${simulator[namespace]} \
+  --set port=${simulator[port]} \
+  "../charts/simulator"
 #########
