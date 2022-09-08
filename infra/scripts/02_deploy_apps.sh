@@ -1,5 +1,22 @@
 #!/bin/bash
 
+# Get commandline arguments
+while (( "$#" )); do
+  case "$1" in
+    --cluster-name)
+      clusterName="$2"
+      shift
+      ;;
+    *)
+      shift
+      ;;
+  esac
+done
+
+if [[ $clusterName == "" ]]; then
+  echo -e "Cluster name is not given. (--cluster-name)\n"
+fi
+
 ##################
 ### Apps Setup ###
 ##################
@@ -71,8 +88,8 @@ helm upgrade "newrelic-bundle newrelic/nri-bundle" \
   --wait \
   --debug \
   --set global.licenseKey=$NEWRELIC_LICENSE_KEY \
-  --set global.cluster=test \
-  --namespace="newrelic "\
+  --set global.cluster=$clusterName \
+  --namespace="monitoring "\
   --create-namespace \
   --set newrelic-infrastructure.privileged=true \
   --set global.lowDataMode=true \
@@ -82,7 +99,7 @@ helm upgrade "newrelic-bundle newrelic/nri-bundle" \
   --set newrelic-pixie.apiKey=$PIXIE_API_KEY \
   --set pixie-chart.enabled=true \
   --set pixie-chart.deployKey=$PIXIE_DEPLOY_KEY \
-  --set pixie-chart.clusterName=test 
+  --set pixie-chart.clusterName=$clusterName 
 #########
 
 ######################
