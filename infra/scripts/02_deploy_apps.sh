@@ -83,6 +83,12 @@ docker build \
   --tag "${DOCKERHUB_NAME}/${javasecond[name]}" \
   "../../apps/java-second/."
 docker push "${DOCKERHUB_NAME}/${javasecond[name]}"
+
+### Simulator ###
+docker build \
+  --tag "${DOCKERHUB_NAME}/${simulator[imageName]}" \
+  "../../apps/simulator/."
+docker push "${DOCKERHUB_NAME}/${simulator[imageName]}"
 #######
 
 #############
