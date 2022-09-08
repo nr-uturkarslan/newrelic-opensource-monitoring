@@ -25,29 +25,35 @@ func simulate() {
 	rand.Seed(time.Now().UnixNano())
 
 	for {
-		requestDto := RequestDto{
-			Message: strconv.Itoa(rand.Intn(1000)),
-		}
+		func() {
+			requestDto := RequestDto{
+				Message: strconv.Itoa(rand.Intn(1000)),
+			}
 
-		client := &http.Client{
-			Timeout: time.Second * 10,
-		}
+			client := &http.Client{
+				Timeout: time.Second * 10,
+			}
 
-		requestDtoInBytes, _ := json.Marshal(requestDto)
-		request, _ := http.NewRequest(http.MethodPost,
-			"http://java-first.java.svc.cluster.local:8080/java/second",
-			bytes.NewBufferString(string(requestDtoInBytes)),
-		)
+			requestDtoInBytes, _ := json.Marshal(requestDto)
+			request, err := http.NewRequest(http.MethodPost,
+				"http://java-first.java.svc.cluster.local:8080/java/second",
+				bytes.NewBufferString(string(requestDtoInBytes)),
+			)
 
-		request.Header.Set("Content-Type", "application/json")
+			if err != nil {
+				fmt.Println(err)
+			}
 
-		response, err := client.Do(request)
-		if err != nil {
-			fmt.Println(err)
-		}
-		defer response.Body.Close()
+			request.Header.Set("Content-Type", "application/json")
 
-		fmt.Println("Create response: " + strconv.Itoa(response.StatusCode))
-		time.Sleep(WAIT_INTERVAL)
+			response, err := client.Do(request)
+			if err != nil {
+				fmt.Println(err)
+			}
+			defer response.Body.Close()
+
+			fmt.Println("Create response: " + strconv.Itoa(response.StatusCode))
+			time.Sleep(WAIT_INTERVAL)
+		}()
 	}
 }
