@@ -6,8 +6,8 @@ resource "azurerm_kubernetes_cluster" "platform" {
   resource_group_name = azurerm_resource_group.platform.name
   location            = azurerm_resource_group.platform.location
 
-  dns_prefix         = var.platform
-  kubernetes_version = "1.24.0"
+  dns_prefix         = "${var.project_kubernetes_cluster_name}-${azurerm_resource_group.nr1.name}"
+  kubernetes_version = var.kubernetes_version
 
   node_resource_group = var.project_kubernetes_cluster_nodepool_name
 
@@ -36,7 +36,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "general" {
   kubernetes_cluster_id = azurerm_kubernetes_cluster.platform.id
   vm_size               = "Standard_DS2_v2"
 
-  orchestrator_version = "1.23.5"
+  orchestrator_version = var.kubernetes_version
 
   node_labels = {
     nodePoolName = "general"

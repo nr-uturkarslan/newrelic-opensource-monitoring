@@ -44,6 +44,12 @@ variable "platform" {
   default = "platform"
 }
 
+# k8s version
+variable "kubernetes_version" {
+  type    = string
+  default = "1.24.0"
+}
+
 ## Resource Names
 
 # Resource Group
