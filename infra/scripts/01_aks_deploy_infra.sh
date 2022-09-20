@@ -5,7 +5,7 @@
 ###################
 
 ### Set parameters
-project="nr1"
+project="oss"
 locationLong="westeurope"
 locationShort="euw"
 stageLong="dev"
