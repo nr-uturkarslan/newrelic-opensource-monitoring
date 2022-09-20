@@ -43,7 +43,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "general" {
   }
 
   enable_auto_scaling = true
-  node_count          = 2
-  min_count           = 2
+  node_count          = 1
+  min_count           = 1
   max_count           = 3
 }
