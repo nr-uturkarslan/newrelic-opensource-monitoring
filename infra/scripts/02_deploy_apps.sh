@@ -15,6 +15,7 @@ done
 
 if [[ $clusterName == "" ]]; then
   echo -e "Cluster name is not given. (--cluster-name)\n"
+  exit 1
 fi
 
 ##################
