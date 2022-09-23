@@ -30,6 +30,21 @@ data:
         check_interval: 5s
         limit_mib: 1638
         spike_limit_mib: 512
+      attributes:
+        actions:
+        # - key: service.name
+        #   value: "java-first"
+        #   action: upsert
+        - key: trace.id
+          from_attribute: trace_id
+          action: upsert
+        - key: span.id
+          from_attribute: span_id
+          action: upsert
+        - key: trace_id
+          action: delete
+        - key: span_id
+          action: delete
       transform:
         logs:
           queries:
@@ -38,10 +53,15 @@ data:
             # use the transform processor to replace trace_id => trace.id, span_id => span.id.
             # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/README.md#trace-context-in-legacy-formats
             # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/transformprocessor
-            # https://github.com/newrelic/newrelic-opentelemetry-examples/tree/main/java/logs-in-context-log4j2
+            # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/pkg/ottl/contexts/ottllogs
             # - replace_pattern(resource.attributes, "\"trace_id\":", "\"trace.id\":")
             # - replace_all_patterns(resource.attributes, "span_id", "span.id")
-            - replace_pattern(body, "level", "test")
+            - replace_pattern(attributes["level"], "INFO", "WARN")
+            # - replace_pattern(resource.attributes, "\"trace_id\":", "\"trace.id\":")
+            # - replace_pattern(resource.attributes, "span_id", "span.id")
+            # - replace_all_patterns(attributes, "span_id", "span.id")
+            - replace_pattern(resource.attributes, "span_id", "span.id")
+            - replace_pattern(resource.attributes, "index", "indextest")
     exporters:
       logging: {}
       otlp:
@@ -66,6 +86,7 @@ data:
           receivers:
           - fluentforward
           processors:
+          - attributes
           - transform
           - batch
           exporters:
