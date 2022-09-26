@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using dotnet_first.Services.DotnetSecondService.Dtos;
+using Microsoft.AspNetCore.Mvc;
 
 namespace dotnet_first.Controllers;
 
@@ -15,9 +16,11 @@ public class DotnetFirstController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet(Name = "second")]
+    [HttpPost(Name = "second")]
     [Route("second")]
-    public ActionResult DotnetSecondMethod()
+    public ActionResult DotnetSecondMethod(
+        [FromBody] CreateValueRequestDto requestDto
+    )
     {
         var result = new ObjectResult("Test");
         //result.StatusCode = (int)response.StatusCode;
