@@ -58,6 +58,20 @@ javasecond["name"]="java-second"
 javasecond["namespace"]="java"
 javasecond["port"]=8080
 
+### Java ###
+
+# First
+declare -A dotnetfirst
+dotnetfirst["name"]="dotnet-first"
+dotnetfirst["namespace"]="dotnet"
+dotnetfirst["port"]=8080
+
+# Second
+declare -A dotnetsecond
+dotnetsecond["name"]="dotnet-second"
+dotnetsecond["namespace"]="dotnet"
+dotnetsecond["port"]=8080
+
 ### Simulator ###
 declare -A simulator
 simulator["name"]="simulator"
@@ -84,6 +98,24 @@ docker build \
   --tag "${DOCKERHUB_NAME}/${javasecond[name]}" \
   "../../apps/java-second/."
 docker push "${DOCKERHUB_NAME}/${javasecond[name]}"
+
+### NET ###
+
+# First
+docker build \
+  --build-arg newRelicAppName=${dotnetfirst[name]} \
+  --build-arg newRelicLicenseKey=$NEWRELIC_LICENSE_KEY \
+  --tag "${DOCKERHUB_NAME}/${dotnetfirst[name]}" \
+  "../../apps/dotnet-first/dotnet-first/."
+docker push "${DOCKERHUB_NAME}/${dotnetfirst[name]}"
+
+# # Second
+# docker build \
+#   --build-arg newRelicAppName=${dotnetsecond[name]} \
+#   --build-arg newRelicLicenseKey=$NEWRELIC_LICENSE_KEY \
+#   --tag "${DOCKERHUB_NAME}/${dotnetsecond[name]}" \
+#   "../../apps/dotnet-second/dotnet-second/."
+# docker push "${DOCKERHUB_NAME}/${dotnetsecond[name]}"
 
 # ### Simulator ###
 # docker build \
@@ -197,6 +229,37 @@ helm upgrade ${javasecond[name]} \
   --set port=${javasecond[port]} \
   "../charts/java-second"
 #########
+
+###################
+### Dotnet Apps ###
+###################
+
+# First
+helm upgrade ${dotnetfirst[name]} \
+  --install \
+  --wait \
+  --debug \
+  --create-namespace \
+  --namespace ${dotnetfirst[namespace]} \
+  --set dockerhubName=$DOCKERHUB_NAME \
+  --set name=${dotnetfirst[name]} \
+  --set namespace=${dotnetfirst[namespace]} \
+  --set port=${dotnetfirst[port]} \
+  "../charts/dotnet-first"
+
+# # Second
+# helm upgrade ${dotnetsecond[name]} \
+#   --install \
+#   --wait \
+#   --debug \
+#   --create-namespace \
+#   --namespace ${dotnetsecond[namespace]} \
+#   --set dockerhubName=$DOCKERHUB_NAME \
+#   --set name=${dotnetsecond[name]} \
+#   --set namespace=${dotnetsecond[namespace]} \
+#   --set port=${dotnetsecond[port]} \
+#   "../charts/dotnet-first"
+# #########
 
 # #################
 # ### Simulator ###
