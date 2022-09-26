@@ -92,27 +92,27 @@ docker push "${DOCKERHUB_NAME}/${javasecond[name]}"
 # docker push "${DOCKERHUB_NAME}/${simulator[name]}"
 # #######
 
-#############
-### Pixie ###
-#############
-helm repo add newrelic https://helm-charts.newrelic.com && helm repo update && \
-kubectl create namespace "monitoring" ; helm upgrade newrelic-bundle newrelic/nri-bundle \
-  --install \
-  --wait \
-  --debug \
-  --set global.licenseKey=$NEWRELIC_LICENSE_KEY \
-  --set global.cluster=$clusterName \
-  --namespace="monitoring" \
-  --set newrelic-infrastructure.privileged=true \
-  --set global.lowDataMode=true \
-  --set ksm.enabled=true \
-  --set kubeEvents.enabled=true \
-  --set newrelic-pixie.enabled=true \
-  --set newrelic-pixie.apiKey=$PIXIE_API_KEY \
-  --set pixie-chart.enabled=true \
-  --set pixie-chart.deployKey=$PIXIE_DEPLOY_KEY \
-  --set pixie-chart.clusterName=$clusterName 
-#########
+# #############
+# ### Pixie ###
+# #############
+# helm repo add newrelic https://helm-charts.newrelic.com && helm repo update && \
+# kubectl create namespace "monitoring" ; helm upgrade newrelic-bundle newrelic/nri-bundle \
+#   --install \
+#   --wait \
+#   --debug \
+#   --set global.licenseKey=$NEWRELIC_LICENSE_KEY \
+#   --set global.cluster=$clusterName \
+#   --namespace="monitoring" \
+#   --set newrelic-infrastructure.privileged=true \
+#   --set global.lowDataMode=true \
+#   --set ksm.enabled=true \
+#   --set kubeEvents.enabled=true \
+#   --set newrelic-pixie.enabled=true \
+#   --set newrelic-pixie.apiKey=$PIXIE_API_KEY \
+#   --set pixie-chart.enabled=true \
+#   --set pixie-chart.deployKey=$PIXIE_DEPLOY_KEY \
+#   --set pixie-chart.clusterName=$clusterName 
+# #########
 
 ######################
 ### Otel Collector ###
@@ -149,6 +149,12 @@ helm upgrade ${fluentbit[name]} \
 ##################
 ### Prometheus ###
 ##################
+  
+## To parse a namespace, use the lines below
+# --set server.remoteWrite[0].write_relabel_configs[0].source_labels[0]="namespace" \
+# --set server.remoteWrite[0].write_relabel_configs[0].regex="(${javafirst[namespace]}|${javasecond[namespace]})" \
+# --set server.remoteWrite[0].write_relabel_configs[0].action="keep" \
+
 helm dependency update "../charts/prometheus"
 helm upgrade prometheus \
   --install \
@@ -159,9 +165,6 @@ helm upgrade prometheus \
   --set namespace=${prometheus[namespace]} \
   --set server.remoteWrite[0].url="https://metric-api.eu.newrelic.com/prometheus/v1/write?prometheus_server=${prometheus[name]}" \
   --set server.remoteWrite[0].bearer_token=$NEWRELIC_LICENSE_KEY \
-  --set server.remoteWrite[0].write_relabel_configs[0].source_labels[0]="namespace" \
-  --set server.remoteWrite[0].write_relabel_configs[0].regex=${javafirst[namespace]} \
-  --set server.remoteWrite[0].write_relabel_configs[0].action="keep" \
   "../charts/prometheus"
 
 #################
