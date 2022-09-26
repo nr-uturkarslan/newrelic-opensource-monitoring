@@ -16,6 +16,7 @@ public class DotnetFirstController : ControllerBase
     }
 
     [HttpGet(Name = "second")]
+    [Route("second")]
     public ActionResult DotnetSecondMethod()
     {
         var result = new ObjectResult("Test");
