@@ -9,6 +9,23 @@
 
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="prometheus-net.AspNetCore" Version="7.0.0-pre-000276-9e65611" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Services\" />
+    <None Remove="Services\Create\" />
+    <None Remove="Services\DotnetSecondService\Dtos\" />
+    <None Remove="Newtonsoft.Json" />
+    <None Remove="prometheus-net" />
+    <None Remove="prometheus-net.AspNetCore" />
+    <None Remove="Dtos\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\" />
+    <Folder Include="Services\DotnetSecondService\" />
+    <Folder Include="Services\DotnetSecondService\Dtos\" />
+    <Folder Include="Dtos\" />
+  </ItemGroup>
 </Project>

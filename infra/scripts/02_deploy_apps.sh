@@ -65,12 +65,14 @@ declare -A dotnetfirst
 dotnetfirst["name"]="dotnet-first"
 dotnetfirst["namespace"]="dotnet"
 dotnetfirst["port"]=8080
+dotnetfirst["portPrometheus"]=5000
 
 # Second
 declare -A dotnetsecond
 dotnetsecond["name"]="dotnet-second"
 dotnetsecond["namespace"]="dotnet"
 dotnetsecond["port"]=8080
+dotnetsecond["portPrometheus"]=5000
 
 ### Simulator ###
 declare -A simulator
@@ -245,6 +247,7 @@ helm upgrade ${dotnetfirst[name]} \
   --set name=${dotnetfirst[name]} \
   --set namespace=${dotnetfirst[namespace]} \
   --set port=${dotnetfirst[port]} \
+  --set portPrometheus=${dotnetfirst[portPrometheus]} \
   "../charts/dotnet-first"
 
 # # Second

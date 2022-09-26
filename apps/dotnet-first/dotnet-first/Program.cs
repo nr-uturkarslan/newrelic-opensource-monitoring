@@ -1,8 +1,17 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Prometheus;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddMetricServer(options =>
+{
+    options.Port = 5000;
+    options.Url = "/metrics";
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -19,6 +19,8 @@ spec:
           ports:
             - protocol: TCP
               containerPort: {{ .Values.port }}
+            - protocol: TCP
+              containerPort: {{ .Values.portPrometheus }}
           resources:
             requests:
               cpu: 200m
