@@ -14,6 +14,7 @@
 
     <appender name="json" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <customFields>{"service.name":"java-first"}</customFields>
         </encoder>
     </appender>
 
