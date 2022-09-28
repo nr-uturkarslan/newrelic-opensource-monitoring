@@ -11,16 +11,12 @@ namespace dotnet_first.Controllers;
 [Route("dotnet")]
 public class DotnetFirstController : ControllerBase
 {
-    private readonly ILogger<DotnetFirstController> _logger;
-
     private readonly IDotnetSecondService _dotnetSecondService;
 
     public DotnetFirstController(
-        ILogger<DotnetFirstController> logger,
         IDotnetSecondService dotnetSecondService
     )
     {
-        _logger = logger;
         _dotnetSecondService = dotnetSecondService;
     }
 
@@ -41,24 +37,24 @@ public class DotnetFirstController : ControllerBase
 
     private void LogFirstDotnetServiceTriggered()
     {
-        CustomLogger.Run(_logger,
+        CustomLogger.Run(
             new CustomLog
             {
                 ClassName = nameof(DotnetFirstController),
                 MethodName = nameof(DotnetSecondMethod),
-                LogLevel = LogLevel.Information,
+                LogLevel = CustomLogLevel.INFO,
                 Message = $"First Dotnet Service is triggered...",
             });
     }
 
     private void LogFirstDotnetServiceFinished()
     {
-        CustomLogger.Run(_logger,
+        CustomLogger.Run(
             new CustomLog
             {
                 ClassName = nameof(DotnetFirstController),
                 MethodName = nameof(DotnetSecondMethod),
-                LogLevel = LogLevel.Information,
+                LogLevel = CustomLogLevel.INFO,
                 Message = $"First Dotnet Service is finished...",
             });
     }

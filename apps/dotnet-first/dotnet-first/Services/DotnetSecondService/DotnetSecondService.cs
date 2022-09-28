@@ -23,17 +23,12 @@ public class DotnetSecondService : IDotnetSecondService
     private const string DOTNET_SECOND_CREATE_URI =
         "http://dotnet-second.dotnet.svc.cluster.local:8080/dotnet/create";
 
-    private readonly ILogger<DotnetSecondService> _logger;
-
     private readonly HttpClient _httpClient;
 
     public DotnetSecondService(
-        ILogger<DotnetSecondService> logger,
         IHttpClientFactory factory
     )
     {
-        _logger = logger;
-
         _httpClient = factory.CreateClient();
     }
 
@@ -161,24 +156,24 @@ public class DotnetSecondService : IDotnetSecondService
 
     private void LogParsingRequestDto()
     {
-        CustomLogger.Run(_logger,
+        CustomLogger.Run(
             new CustomLog
             {
                 ClassName = nameof(DotnetSecondService),
                 MethodName = nameof(ParseRequestDto),
-                LogLevel = LogLevel.Information,
+                LogLevel = CustomLogLevel.INFO,
                 Message = "Parsing request DTO...",
             });
     }
 
     private void LogParsingRequestDtoSuccessful()
     {
-        CustomLogger.Run(_logger,
+        CustomLogger.Run(
             new CustomLog
             {
                 ClassName = nameof(DotnetSecondService),
                 MethodName = nameof(ParseRequestDto),
-                LogLevel = LogLevel.Information,
+                LogLevel = CustomLogLevel.INFO,
                 Message = "Parsing request DTO is successful.",
             });
     }
@@ -188,12 +183,12 @@ public class DotnetSecondService : IDotnetSecondService
         string message
     )
     {
-        CustomLogger.Run(_logger,
+        CustomLogger.Run(
             new CustomLog
             {
                 ClassName = nameof(DotnetSecondService),
                 MethodName = nameof(ParseRequestDto),
-                LogLevel = LogLevel.Error,
+                LogLevel = CustomLogLevel.ERROR,
                 Message = message,
                 Exception = e.Message,
                 StackTrace = e.StackTrace,
@@ -202,24 +197,24 @@ public class DotnetSecondService : IDotnetSecondService
 
     private void LogPerformingHttpRequest()
     {
-        CustomLogger.Run(_logger,
+        CustomLogger.Run(
             new CustomLog
             {
                 ClassName = nameof(DotnetSecondService),
                 MethodName = nameof(PerformHttpRequest),
-                LogLevel = LogLevel.Information,
+                LogLevel = CustomLogLevel.INFO,
                 Message = $"Performing HTTP request to second Dotnet Service...",
             });
     }
 
     private void LogPerformingHttpRequestSuccessful()
     {
-        CustomLogger.Run(_logger,
+        CustomLogger.Run(
             new CustomLog
             {
                 ClassName = nameof(DotnetSecondService),
                 MethodName = nameof(PerformHttpRequest),
-                LogLevel = LogLevel.Information,
+                LogLevel = CustomLogLevel.INFO,
                 Message = $"Performing HTTP request to second Dotnet Service is successful.",
             });
     }
@@ -229,12 +224,12 @@ public class DotnetSecondService : IDotnetSecondService
         string message
     )
     {
-        CustomLogger.Run(_logger,
+        CustomLogger.Run(
             new CustomLog
             {
                 ClassName = nameof(DotnetSecondService),
                 MethodName = nameof(PerformHttpRequest),
-                LogLevel = LogLevel.Error,
+                LogLevel = CustomLogLevel.ERROR,
                 Message = message,
                 Exception = e.Message,
                 StackTrace = e.StackTrace,
@@ -243,24 +238,24 @@ public class DotnetSecondService : IDotnetSecondService
 
     private void LogParsingResponseDto()
     {
-        CustomLogger.Run(_logger,
+        CustomLogger.Run(
             new CustomLog
             {
                 ClassName = nameof(DotnetSecondService),
                 MethodName = nameof(ParseResponseDto),
-                LogLevel = LogLevel.Information,
+                LogLevel = CustomLogLevel.INFO,
                 Message = "Parsing response DTO...",
             });
     }
 
     private void LogParsingResponseDtoSuccessful()
     {
-        CustomLogger.Run(_logger,
+        CustomLogger.Run(
             new CustomLog
             {
                 ClassName = nameof(DotnetSecondService),
                 MethodName = nameof(ParseResponseDto),
-                LogLevel = LogLevel.Information,
+                LogLevel = CustomLogLevel.INFO,
                 Message = "Parsing response DTO is successful.",
             });
     }
@@ -270,12 +265,12 @@ public class DotnetSecondService : IDotnetSecondService
         string message
     )
     {
-        CustomLogger.Run(_logger,
+        CustomLogger.Run(
             new CustomLog
             {
                 ClassName = nameof(DotnetSecondService),
                 MethodName = nameof(ParseResponseDto),
-                LogLevel = LogLevel.Error,
+                LogLevel = CustomLogLevel.ERROR,
                 Message = message,
                 Exception = e.Message,
                 StackTrace = e.StackTrace,

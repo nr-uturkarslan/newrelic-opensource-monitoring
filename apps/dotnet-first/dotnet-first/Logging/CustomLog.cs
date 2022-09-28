@@ -16,7 +16,7 @@ public class CustomLog
     public string MethodName { get; set; }
 
     [JsonProperty("logLevel")]
-    public LogLevel LogLevel { get; set; }
+    public string LogLevel { get; set; }
 
     [JsonProperty("message")]
     public string Message { get; set; }

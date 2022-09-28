@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace dotnet_first.Logging;
@@ -6,7 +7,6 @@ namespace dotnet_first.Logging;
 public static class CustomLogger
 {
     public static void Run(
-        ILogger logger,
         CustomLog customLog
     )
     {
@@ -17,16 +17,7 @@ public static class CustomLogger
                 NullValueHandling = NullValueHandling.Ignore
             });
 
-        switch (customLog.LogLevel)
-        {
-            case LogLevel.Error:
-                logger.LogError(log);
-                break;
-
-            default:
-                logger.LogInformation(log);
-                break;
-        }
+        Console.WriteLine(log);
     }
 }
 
