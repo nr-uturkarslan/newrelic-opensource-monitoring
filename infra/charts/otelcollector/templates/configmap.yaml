@@ -56,12 +56,12 @@ data:
             # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/pkg/ottl/contexts/ottllogs
             # - replace_pattern(resource.attributes, "\"trace_id\":", "\"trace.id\":")
             # - replace_all_patterns(resource.attributes, "span_id", "span.id")
-            - replace_pattern(attributes["level"], "INFO", "WARN")
+            # - replace_pattern(attributes["level"], "INFO", "WARN")
             # - replace_pattern(resource.attributes, "\"trace_id\":", "\"trace.id\":")
             # - replace_pattern(resource.attributes, "span_id", "span.id")
             # - replace_all_patterns(attributes, "span_id", "span.id")
-            - replace_pattern(resource.attributes, "span_id", "span.id")
-            - replace_pattern(resource.attributes, "index", "indextest")
+            # - replace_pattern(resource.attributes, "span_id", "span.id")
+            # - replace_pattern(resource.attributes, "index", "indextest")
     exporters:
       logging: {}
       otlp:
