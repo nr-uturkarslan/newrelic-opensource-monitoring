@@ -46,7 +46,7 @@ public class DotnetSecondService : IDotnetSecondService
         try
         {
             // Create span
-            using var activity = _source.StartActivity($"{nameof(DotnetSecondService)}/{nameof(Run)}");
+            using var activity = _source.StartActivity($"{nameof(DotnetSecondService)}.{nameof(Run)}");
             
             // Parse request
             var requestDtoAsString = ParseRequestDto(requestDto);
@@ -82,7 +82,7 @@ public class DotnetSecondService : IDotnetSecondService
     )
     {
         // Create span
-        using var activity = _source.StartActivity($"{nameof(DotnetSecondService)}/{nameof(ParseRequestDto)}");
+        using var activity = _source.StartActivity($"{nameof(DotnetSecondService)}.{nameof(ParseRequestDto)}");
 
         try
         {
@@ -107,7 +107,7 @@ public class DotnetSecondService : IDotnetSecondService
     )
     {
         // Create span
-        using var activity = _source.StartActivity($"{nameof(DotnetSecondService)}/{nameof(PerformHttpRequest)}");
+        using var activity = _source.StartActivity($"{nameof(DotnetSecondService)}.{nameof(PerformHttpRequest)}");
 
         try
         {
@@ -146,7 +146,7 @@ public class DotnetSecondService : IDotnetSecondService
     )
     {
         // Create span
-        using var activity = _source.StartActivity($"{nameof(DotnetSecondService)}/{nameof(ParseResponseDto)}");
+        using var activity = _source.StartActivity($"{nameof(DotnetSecondService)}.{nameof(ParseResponseDto)}");
 
         try
         {

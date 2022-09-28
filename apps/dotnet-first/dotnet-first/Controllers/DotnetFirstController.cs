@@ -34,7 +34,7 @@ public class DotnetFirstController : ControllerBase
     )
     {
         // Create span
-        using var activity = _source.StartActivity($"{nameof(DotnetFirstController)}/{nameof(DotnetSecondMethod)}");
+        using var activity = _source.StartActivity($"{nameof(DotnetFirstController)}.{nameof(DotnetSecondMethod)}");
 
         LogFirstDotnetServiceTriggered(activity);
 
