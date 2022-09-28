@@ -1,4 +1,5 @@
 ﻿using dotnet_first.Commons;
+using dotnet_first.Services.DotnetSecondService;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Prometheus;
@@ -41,6 +42,10 @@ builder.Services.AddOpenTelemetryTracing(b =>
     b.AddSource(Constants.OTEL_SERVICE_NAME);
 });
 
+// Services
+builder.Services.AddSingleton<IDotnetSecondService, DotnetSecondService>();
+
+// Controllers
 builder.Services.AddControllers();
 
 builder.Services.AddMetricServer(options =>

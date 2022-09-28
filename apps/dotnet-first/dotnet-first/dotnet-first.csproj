@@ -32,6 +32,8 @@
     <None Remove="OpenTelemetry" />
     <None Remove="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
     <None Remove="OpenTelemetry.Instrumentation.Http" />
+    <None Remove="Logging\" />
+    <None Remove="Commons\Exceptions\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
@@ -39,5 +41,7 @@
     <Folder Include="Services\DotnetSecondService\Dtos\" />
     <Folder Include="Dtos\" />
     <Folder Include="Commons\" />
+    <Folder Include="Logging\" />
+    <Folder Include="Commons\Exceptions\" />
   </ItemGroup>
 </Project>
