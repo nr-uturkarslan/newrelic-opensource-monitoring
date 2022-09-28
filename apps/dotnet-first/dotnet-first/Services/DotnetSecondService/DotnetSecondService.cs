@@ -1,6 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Text;
+﻿using System.Text;
 using dotnet_first.Dtos;
 using dotnet_first.Services.DotnetSecondService.Dtos;
 using Newtonsoft.Json;
