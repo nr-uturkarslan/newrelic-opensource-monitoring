@@ -11,5 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ResponseDto {
 
-    private String message;
+    private String id;
+    private String value;
+    private String tag;
 }

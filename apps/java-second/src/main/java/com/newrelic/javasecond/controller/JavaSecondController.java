@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("java")
 public class JavaSecondController {
@@ -21,7 +23,9 @@ public class JavaSecondController {
         logger.info("Java second method is triggered...");
 
         var responseDto = new ResponseDto();
-        responseDto.setMessage(requestDto.getMessage());
+        responseDto.setId(UUID.randomUUID().toString());
+        responseDto.setValue(requestDto.getValue());
+        responseDto.setTag(requestDto.getTag());
 
         var response = new ResponseEntity<>(responseDto, HttpStatus.OK);
 

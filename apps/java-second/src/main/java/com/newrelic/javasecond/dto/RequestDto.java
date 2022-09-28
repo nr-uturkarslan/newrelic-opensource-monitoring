@@ -11,5 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class RequestDto {
 
-    private String message;
+    private String value;
+    private String tag;
 }
