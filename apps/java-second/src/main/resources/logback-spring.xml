@@ -14,7 +14,7 @@
 
     <appender name="json" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <customFields>{"service.name":"java-second"}</customFields>
+            <customFields>{"service.name":"${OTEL_SERVICE_NAME}","hostname":"${POD_NAME}"}</customFields>
         </encoder>
     </appender>
 
