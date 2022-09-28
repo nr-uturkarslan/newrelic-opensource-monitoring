@@ -105,8 +105,6 @@ docker push "${DOCKERHUB_NAME}/${javasecond[name]}"
 
 # First
 docker build \
-  --build-arg newRelicAppName=${dotnetfirst[name]} \
-  --build-arg newRelicLicenseKey=$NEWRELIC_LICENSE_KEY \
   --tag "${DOCKERHUB_NAME}/${dotnetfirst[name]}" \
   "../../apps/dotnet-first/dotnet-first/."
 docker push "${DOCKERHUB_NAME}/${dotnetfirst[name]}"
@@ -248,6 +246,8 @@ helm upgrade ${dotnetfirst[name]} \
   --set namespace=${dotnetfirst[namespace]} \
   --set port=${dotnetfirst[port]} \
   --set portPrometheus=${dotnetfirst[portPrometheus]} \
+  --set otelServiceName=${dotnetfirst[name]} \
+  --set otelExporterGrpcEndpoint=${otelcollector[grpcEndpoint]} \
   "../charts/dotnet-first"
 
 # # Second
