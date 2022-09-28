@@ -23,8 +23,8 @@ public interface IDotnetSecondService
 
 public class DotnetSecondService : IDotnetSecondService
 {
-    private const string DOTNET_SECOND_CREATE_URI =
-        "http://dotnet-second.dotnet.svc.cluster.local:8080/dotnet/create";
+    private const string DOTNET_SECOND_URI =
+        "http://dotnet-second.dotnet.svc.cluster.local:8080/dotnet/second";
 
     private readonly HttpClient _httpClient;
 
@@ -121,7 +121,7 @@ public class DotnetSecondService : IDotnetSecondService
 
             var httpRequest = new HttpRequestMessage(
                 HttpMethod.Post,
-                DOTNET_SECOND_CREATE_URI
+                DOTNET_SECOND_URI
             )
             {
                 Content = stringContent

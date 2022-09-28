@@ -109,13 +109,11 @@ docker build \
   "../../apps/dotnet-first/dotnet-first/."
 docker push "${DOCKERHUB_NAME}/${dotnetfirst[name]}"
 
-# # Second
-# docker build \
-#   --build-arg newRelicAppName=${dotnetsecond[name]} \
-#   --build-arg newRelicLicenseKey=$NEWRELIC_LICENSE_KEY \
-#   --tag "${DOCKERHUB_NAME}/${dotnetsecond[name]}" \
-#   "../../apps/dotnet-second/dotnet-second/."
-# docker push "${DOCKERHUB_NAME}/${dotnetsecond[name]}"
+# Second
+docker build \
+  --tag "${DOCKERHUB_NAME}/${dotnetsecond[name]}" \
+  "../../apps/dotnet-second/dotnet-second/."
+docker push "${DOCKERHUB_NAME}/${dotnetsecond[name]}"
 
 # ### Simulator ###
 # docker build \
@@ -250,19 +248,22 @@ helm upgrade ${dotnetfirst[name]} \
   --set otelExporterOtlpEndpoint=${otelcollector[grpcEndpoint]} \
   "../charts/dotnet-first"
 
-# # Second
-# helm upgrade ${dotnetsecond[name]} \
-#   --install \
-#   --wait \
-#   --debug \
-#   --create-namespace \
-#   --namespace ${dotnetsecond[namespace]} \
-#   --set dockerhubName=$DOCKERHUB_NAME \
-#   --set name=${dotnetsecond[name]} \
-#   --set namespace=${dotnetsecond[namespace]} \
-#   --set port=${dotnetsecond[port]} \
-#   "../charts/dotnet-first"
-# #########
+# Second
+helm upgrade ${dotnetsecond[name]} \
+  --install \
+  --wait \
+  --debug \
+  --create-namespace \
+  --namespace ${dotnetsecond[namespace]} \
+  --set dockerhubName=$DOCKERHUB_NAME \
+  --set name=${dotnetsecond[name]} \
+  --set namespace=${dotnetsecond[namespace]} \
+  --set port=${dotnetsecond[port]} \
+  --set portPrometheus=${dotnetsecond[portPrometheus]} \
+  --set otelServiceName=${dotnetsecond[name]} \
+  --set otelExporterOtlpEndpoint=${otelcollector[grpcEndpoint]} \
+  "../charts/dotnet-second"
+#########
 
 # #################
 # ### Simulator ###
