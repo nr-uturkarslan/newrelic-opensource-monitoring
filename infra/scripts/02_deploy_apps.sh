@@ -247,7 +247,7 @@ helm upgrade ${dotnetfirst[name]} \
   --set port=${dotnetfirst[port]} \
   --set portPrometheus=${dotnetfirst[portPrometheus]} \
   --set otelServiceName=${dotnetfirst[name]} \
-  --set otelExporterGrpcEndpoint=${otelcollector[grpcEndpoint]} \
+  --set otelExporterOtlpEndpoint=${otelcollector[grpcEndpoint]} \
   "../charts/dotnet-first"
 
 # # Second
