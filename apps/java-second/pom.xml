@@ -55,6 +55,12 @@
 			<version>7.2</version>
 		</dependency>
 
+		<dependency>
+			<groupId>io.opentelemetry.instrumentation</groupId>
+			<artifactId>opentelemetry-instrumentation-annotations</artifactId>
+			<version>1.18.0-alpha</version>
+		</dependency>
+
 		<!--		&lt;!&ndash; https://mvnrepository.com/artifact/ch.qos.logback.contrib/logback-jackson &ndash;&gt;-->
 		<!--		<dependency>-->
 		<!--			<groupId>ch.qos.logback.contrib</groupId>-->

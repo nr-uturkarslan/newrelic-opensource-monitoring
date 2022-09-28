@@ -55,6 +55,12 @@
 			<version>7.2</version>
 		</dependency>
 
+		<dependency>
+			<groupId>io.opentelemetry.instrumentation</groupId>
+			<artifactId>opentelemetry-instrumentation-annotations</artifactId>
+			<version>1.18.0-alpha</version>
+		</dependency>
+
 <!--		&lt;!&ndash; https://mvnrepository.com/artifact/org.slf4j/slf4j-api &ndash;&gt;-->
 <!--		<dependency>-->
 <!--			<groupId>org.slf4j</groupId>-->

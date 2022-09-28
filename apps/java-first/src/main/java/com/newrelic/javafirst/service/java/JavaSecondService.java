@@ -2,6 +2,7 @@ package com.newrelic.javafirst.service.java;
 
 import com.newrelic.javafirst.dto.RequestDto;
 import com.newrelic.javafirst.dto.ResponseDto;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ public class JavaSecondService {
 
     public JavaSecondService() {}
 
+    @WithSpan
     public ResponseEntity<ResponseDto> run(
             RequestDto requestDto
     ) {
@@ -32,6 +34,7 @@ public class JavaSecondService {
         return response;
     }
 
+    @WithSpan
     private ResponseEntity<ResponseDto> makeRequestToJavaSecondService(
             RequestDto requestDto
     ) {
