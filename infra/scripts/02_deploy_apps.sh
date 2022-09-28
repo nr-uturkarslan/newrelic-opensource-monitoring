@@ -89,14 +89,12 @@ simulator["port"]=8080
 
 # First
 docker build \
-  --build-arg otelExporterOtlpEndpoint=${otelcollector[grpcEndpoint]} \
   --tag "${DOCKERHUB_NAME}/${javafirst[name]}" \
   "../../apps/java-first/."
 docker push "${DOCKERHUB_NAME}/${javafirst[name]}"
 
 # Second
 docker build \
-  --build-arg otelExporterOtlpEndpoint=${otelcollector[grpcEndpoint]} \
   --tag "${DOCKERHUB_NAME}/${javasecond[name]}" \
   "../../apps/java-second/."
 docker push "${DOCKERHUB_NAME}/${javasecond[name]}"
@@ -179,7 +177,7 @@ helm upgrade ${fluentbit[name]} \
 ##################
 ### Prometheus ###
 ##################
-  
+
 ## To parse a namespace, use the lines below
 # --set server.remoteWrite[0].write_relabel_configs[0].source_labels[0]="namespace" \
 # --set server.remoteWrite[0].write_relabel_configs[0].regex="(${javafirst[namespace]}|${javasecond[namespace]})" \
@@ -212,6 +210,8 @@ helm upgrade ${javafirst[name]} \
   --set name=${javafirst[name]} \
   --set namespace=${javafirst[namespace]} \
   --set port=${javafirst[port]} \
+  --set otelServiceName=${javafirst[name]} \
+  --set otelExporterOtlpEndpoint=${otelcollector[grpcEndpoint]} \
   "../charts/java-first"
 
 # Second
@@ -225,6 +225,8 @@ helm upgrade ${javasecond[name]} \
   --set name=${javasecond[name]} \
   --set namespace=${javasecond[namespace]} \
   --set port=${javasecond[port]} \
+  --set otelServiceName=${javasecond[name]} \
+  --set otelExporterOtlpEndpoint=${otelcollector[grpcEndpoint]} \
   "../charts/java-second"
 #########
 
