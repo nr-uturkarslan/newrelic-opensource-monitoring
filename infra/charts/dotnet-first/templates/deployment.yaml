@@ -16,6 +16,19 @@ spec:
       containers:
         - name: {{ .Values.name }}
           image: "{{ .Values.dockerhubName }}/{{ .Values.name }}"
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OTEL_SERVICE_NAME
+              value: {{ .Values.name }}
+            - name: OTEL_TRACES_EXPORTER
+              value: otlp
+            - name: OTLP_METRICS_EXPORTER
+              value: none
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ .Values.otelExporterOtlpEndpoint }}
           ports:
             - protocol: TCP
               containerPort: {{ .Values.port }}
