@@ -1,5 +1,7 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using System.Text;
+using dotnet_first.Commons;
 using dotnet_first.Commons.Exceptions;
 using dotnet_first.Controllers;
 using dotnet_first.Dtos;
@@ -8,6 +10,7 @@ using dotnet_first.Services.DotnetSecondService.Dtos;
 using Google.Protobuf;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using OpenTelemetry.Resources;
 
 namespace dotnet_first.Services.DotnetSecondService;
 
@@ -25,11 +28,15 @@ public class DotnetSecondService : IDotnetSecondService
 
     private readonly HttpClient _httpClient;
 
+    private readonly ActivitySource _source;
+
     public DotnetSecondService(
         IHttpClientFactory factory
     )
     {
         _httpClient = factory.CreateClient();
+
+        _source = new ActivitySource(Constants.OTEL_SERVICE_NAME);
     }
 
     public async Task<ResponseDto<CreateValueResponseDto>> Run(
@@ -38,6 +45,9 @@ public class DotnetSecondService : IDotnetSecondService
     {
         try
         {
+            // Create span
+            using var activity = _source.StartActivity($"{nameof(DotnetSecondService)}/{nameof(Run)}");
+            
             // Parse request
             var requestDtoAsString = ParseRequestDto(requestDto);
 
@@ -71,20 +81,23 @@ public class DotnetSecondService : IDotnetSecondService
         CreateValueRequestDto requestDto
     )
     {
+        // Create span
+        using var activity = _source.StartActivity($"{nameof(DotnetSecondService)}/{nameof(ParseRequestDto)}");
+
         try
         {
-            LogParsingRequestDto();
+            LogParsingRequestDto(activity);
 
             var requestDtoAsString = JsonConvert.SerializeObject(requestDto);
 
-            LogParsingRequestDtoSuccessful();
+            LogParsingRequestDtoSuccessful(activity);
 
             return requestDtoAsString;
         }
         catch (Exception e)
         {
             var message = "Request body is invalid.";
-            LogParsingRequestDtoFailed(e, message);
+            LogParsingRequestDtoFailed(e, message, activity);
             throw new ParsingFailedException(message);
         }
     }
@@ -93,9 +106,12 @@ public class DotnetSecondService : IDotnetSecondService
         string requestDtoAsString
     )
     {
+        // Create span
+        using var activity = _source.StartActivity($"{nameof(DotnetSecondService)}/{nameof(PerformHttpRequest)}");
+
         try
         {
-            LogPerformingHttpRequest();
+            LogPerformingHttpRequest(activity);
 
             var stringContent = new StringContent(
             requestDtoAsString,
@@ -113,14 +129,14 @@ public class DotnetSecondService : IDotnetSecondService
 
             var response = _httpClient.Send(httpRequest);
 
-            LogPerformingHttpRequestSuccessful();
+            LogPerformingHttpRequestSuccessful(activity);
 
             return response;
         }
         catch (Exception e)
         {
             var message = "Performing HTTP request to second Dotnet Service is failed.";
-            LogPerformingHttpRequestFailed(e, message);
+            LogPerformingHttpRequestFailed(e, message, activity);
             throw new HttpRequestFailedException(message);
         }
     }
@@ -129,15 +145,18 @@ public class DotnetSecondService : IDotnetSecondService
         HttpResponseMessage responseMessage
     )
     {
+        // Create span
+        using var activity = _source.StartActivity($"{nameof(DotnetSecondService)}/{nameof(ParseResponseDto)}");
+
         try
         {
-            LogParsingResponseDto();
+            LogParsingResponseDto(activity);
 
             var responseAsString = await responseMessage.Content.ReadAsStringAsync();
 
             var response = JsonConvert.DeserializeObject<ResponseDto<CreateValueResponseDto>>(responseAsString);
 
-            LogParsingResponseDtoSuccessful();
+            LogParsingResponseDtoSuccessful(activity);
 
             return new ResponseDto<CreateValueResponseDto>
             {
@@ -149,12 +168,14 @@ public class DotnetSecondService : IDotnetSecondService
         catch (Exception e)
         {
             var message = "Response body could not be parsed.";
-            LogParsingResponseDtoFailed(e, message);
+            LogParsingResponseDtoFailed(e, message, activity);
             throw new ParsingFailedException(message);
         }
     }
 
-    private void LogParsingRequestDto()
+    private void LogParsingRequestDto(
+        Activity? activity
+    )
     {
         CustomLogger.Run(
             new CustomLog
@@ -163,10 +184,14 @@ public class DotnetSecondService : IDotnetSecondService
                 MethodName = nameof(ParseRequestDto),
                 LogLevel = CustomLogLevel.INFO,
                 Message = "Parsing request DTO...",
+                TraceId = activity?.TraceId.ToString(),
+                SpanId = activity?.SpanId.ToString(),
             });
     }
 
-    private void LogParsingRequestDtoSuccessful()
+    private void LogParsingRequestDtoSuccessful(
+        Activity? activity
+    )
     {
         CustomLogger.Run(
             new CustomLog
@@ -175,12 +200,15 @@ public class DotnetSecondService : IDotnetSecondService
                 MethodName = nameof(ParseRequestDto),
                 LogLevel = CustomLogLevel.INFO,
                 Message = "Parsing request DTO is successful.",
+                TraceId = activity?.TraceId.ToString(),
+                SpanId = activity?.SpanId.ToString(),
             });
     }
 
     private void LogParsingRequestDtoFailed(
         Exception e,
-        string message
+        string message,
+        Activity? activity
     )
     {
         CustomLogger.Run(
@@ -192,10 +220,14 @@ public class DotnetSecondService : IDotnetSecondService
                 Message = message,
                 Exception = e.Message,
                 StackTrace = e.StackTrace,
+                TraceId = activity?.TraceId.ToString(),
+                SpanId = activity?.SpanId.ToString(),
             });
     }
 
-    private void LogPerformingHttpRequest()
+    private void LogPerformingHttpRequest(
+        Activity? activity
+    )
     {
         CustomLogger.Run(
             new CustomLog
@@ -204,10 +236,14 @@ public class DotnetSecondService : IDotnetSecondService
                 MethodName = nameof(PerformHttpRequest),
                 LogLevel = CustomLogLevel.INFO,
                 Message = $"Performing HTTP request to second Dotnet Service...",
+                TraceId = activity?.TraceId.ToString(),
+                SpanId = activity?.SpanId.ToString(),
             });
     }
 
-    private void LogPerformingHttpRequestSuccessful()
+    private void LogPerformingHttpRequestSuccessful(
+        Activity? activity
+    )
     {
         CustomLogger.Run(
             new CustomLog
@@ -216,12 +252,15 @@ public class DotnetSecondService : IDotnetSecondService
                 MethodName = nameof(PerformHttpRequest),
                 LogLevel = CustomLogLevel.INFO,
                 Message = $"Performing HTTP request to second Dotnet Service is successful.",
+                TraceId = activity?.TraceId.ToString(),
+                SpanId = activity?.SpanId.ToString(),
             });
     }
 
     private void LogPerformingHttpRequestFailed(
         Exception e,
-        string message
+        string message,
+        Activity? activity
     )
     {
         CustomLogger.Run(
@@ -233,10 +272,14 @@ public class DotnetSecondService : IDotnetSecondService
                 Message = message,
                 Exception = e.Message,
                 StackTrace = e.StackTrace,
+                TraceId = activity?.TraceId.ToString(),
+                SpanId = activity?.SpanId.ToString(),
             });
     }
 
-    private void LogParsingResponseDto()
+    private void LogParsingResponseDto(
+        Activity? activity
+    )
     {
         CustomLogger.Run(
             new CustomLog
@@ -245,10 +288,14 @@ public class DotnetSecondService : IDotnetSecondService
                 MethodName = nameof(ParseResponseDto),
                 LogLevel = CustomLogLevel.INFO,
                 Message = "Parsing response DTO...",
+                TraceId = activity?.TraceId.ToString(),
+                SpanId = activity?.SpanId.ToString(),
             });
     }
 
-    private void LogParsingResponseDtoSuccessful()
+    private void LogParsingResponseDtoSuccessful(
+        Activity? activity
+    )
     {
         CustomLogger.Run(
             new CustomLog
@@ -257,12 +304,15 @@ public class DotnetSecondService : IDotnetSecondService
                 MethodName = nameof(ParseResponseDto),
                 LogLevel = CustomLogLevel.INFO,
                 Message = "Parsing response DTO is successful.",
+                TraceId = activity?.TraceId.ToString(),
+                SpanId = activity?.SpanId.ToString(),
             });
     }
 
     private void LogParsingResponseDtoFailed(
         Exception e,
-        string message
+        string message,
+        Activity? activity
     )
     {
         CustomLogger.Run(
@@ -274,6 +324,8 @@ public class DotnetSecondService : IDotnetSecondService
                 Message = message,
                 Exception = e.Message,
                 StackTrace = e.StackTrace,
+                TraceId = activity?.TraceId.ToString(),
+                SpanId = activity?.SpanId.ToString(),
             });
     }
 }

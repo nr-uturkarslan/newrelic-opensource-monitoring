@@ -6,9 +6,7 @@ namespace dotnet_first.Logging;
 
 public class CustomLog
 {
-    [JsonProperty("service.name")]
-    public string ServiceName { get; set; } = Constants.OTEL_SERVICE_NAME;
-
+    // Code specific properties
     [JsonProperty("className")]
     public string ClassName { get; set; }
 
@@ -26,5 +24,18 @@ public class CustomLog
 
     [JsonProperty("stackTrace")]
     public string StackTrace { get; set; }
+
+    // Trace specific properties
+    [JsonProperty("hostname")]
+    public string HostName { get; set; } = Constants.POD_NAME;
+
+    [JsonProperty("service.name")]
+    public string ServiceName { get; set; } = Constants.OTEL_SERVICE_NAME;
+
+    [JsonProperty("trace.id")]
+    public string TraceId { get; set; }
+
+    [JsonProperty("span.id")]
+    public string SpanId { get; set; }
 }
 
