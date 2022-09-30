@@ -40,17 +40,16 @@ while true
 do
 
   # Dotnet
-  dotnetCount=$(echo $(( $RANDOM % 3 + 1 )))
+  dotnetCount=$(echo $(( $RANDOM % 4 + 1 )))
   for i in $(eval echo "{1..$dotnetCount}")
   do
     createValue $dotnetEndpoint
   done
 
   errorCount=$(echo $(( $RANDOM % 2 )))
-  for i in $(eval echo "{1..$errorCount}")
-  do
+  if [[ $errorCount -eq 1 ]]; then
     createValue $dotnetEndpointError
-  done
+  fi
 
   # Java
   javaCount=$(echo $(( $RANDOM % 3 + 1 )))
@@ -59,9 +58,8 @@ do
     createValue $javaEndpoint
   done
 
-  errorCount=$(echo $(( $RANDOM % 2 )))
-  for i in $(eval echo "{1..$errorCount}")
-  do
+  errorCount=$(echo $(( $RANDOM % 3 )))
+  if [[ $errorCount -eq 1 ]]; then
     createValue $javaEndpointError
-  done
+  fi
 done
