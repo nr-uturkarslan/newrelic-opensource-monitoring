@@ -50,14 +50,14 @@ prometheus["namespace"]="monitoring"
 declare -A javafirst
 javafirst["name"]="java-first"
 javafirst["namespace"]="java"
-javafirst["replicas"]=3
+javafirst["replicas"]=2
 javafirst["port"]=8080
 
 # Second
 declare -A javasecond
 javasecond["name"]="java-second"
 javasecond["namespace"]="java"
-javasecond["replicas"]=3
+javasecond["replicas"]=2
 javasecond["port"]=8080
 
 ### Java ###
@@ -66,7 +66,7 @@ javasecond["port"]=8080
 declare -A dotnetfirst
 dotnetfirst["name"]="dotnet-first"
 dotnetfirst["namespace"]="dotnet"
-dotnetfirst["replicas"]=3
+dotnetfirst["replicas"]=2
 dotnetfirst["port"]=8080
 dotnetfirst["portPrometheus"]=5000
 
@@ -74,7 +74,7 @@ dotnetfirst["portPrometheus"]=5000
 declare -A dotnetsecond
 dotnetsecond["name"]="dotnet-second"
 dotnetsecond["namespace"]="dotnet"
-dotnetsecond["replicas"]=3
+dotnetsecond["replicas"]=2
 dotnetsecond["port"]=8080
 dotnetsecond["portPrometheus"]=5000
 
