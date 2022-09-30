@@ -142,6 +142,13 @@ docker push "${DOCKERHUB_NAME}/${dotnetsecond[name]}"
 #   --set pixie-chart.clusterName=$clusterName 
 # #########
 
+################################
+### NGINX Ingress Controller ###
+################################
+helm repo add nginx-stable https://helm.nginx.com/stable
+helm repo update
+helm install nginx-ingress nginx-stable/nginx-ingress
+
 ######################
 ### Otel Collector ###
 ######################
