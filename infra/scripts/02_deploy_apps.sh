@@ -116,7 +116,7 @@ docker push "${DOCKERHUB_NAME}/${dotnetsecond[name]}"
 # ### Simulator ###
 # docker build \
 #   --tag "${DOCKERHUB_NAME}/${simulator[name]}" \
-#   "../../apps/simulator/."
+#   "../../apps/simulator-go/."
 # docker push "${DOCKERHUB_NAME}/${simulator[name]}"
 # #######
 
@@ -298,5 +298,5 @@ helm upgrade ${dotnetsecond[name]} \
 #   --set imageName=${simulator[name]} \
 #   --set namespace=${simulator[namespace]} \
 #   --set port=${simulator[port]} \
-#   "../charts/simulator"
+#   "../charts/simulator-go"
 # #########
