@@ -50,12 +50,14 @@ prometheus["namespace"]="monitoring"
 declare -A javafirst
 javafirst["name"]="java-first"
 javafirst["namespace"]="java"
+javafirst["replicas"]=3
 javafirst["port"]=8080
 
 # Second
 declare -A javasecond
 javasecond["name"]="java-second"
 javasecond["namespace"]="java"
+javasecond["replicas"]=3
 javasecond["port"]=8080
 
 ### Java ###
@@ -64,6 +66,7 @@ javasecond["port"]=8080
 declare -A dotnetfirst
 dotnetfirst["name"]="dotnet-first"
 dotnetfirst["namespace"]="dotnet"
+dotnetfirst["replicas"]=3
 dotnetfirst["port"]=8080
 dotnetfirst["portPrometheus"]=5000
 
@@ -71,6 +74,7 @@ dotnetfirst["portPrometheus"]=5000
 declare -A dotnetsecond
 dotnetsecond["name"]="dotnet-second"
 dotnetsecond["namespace"]="dotnet"
+dotnetsecond["replicas"]=3
 dotnetsecond["port"]=8080
 dotnetsecond["portPrometheus"]=5000
 
@@ -80,7 +84,7 @@ dotnetsecond["portPrometheus"]=5000
 declare -A simulatorbash
 simulatorbash["name"]="simulatorbash"
 simulatorbash["namespace"]="simulator"
-simulatorbash["replicas"]=1
+simulatorbash["replicas"]=5
 
 # Go
 declare -A simulatorgo
@@ -240,6 +244,7 @@ helm upgrade ${javafirst[name]} \
   --set dockerhubName=$DOCKERHUB_NAME \
   --set name=${javafirst[name]} \
   --set namespace=${javafirst[namespace]} \
+  --set replicas=${javafirst[replicas]} \
   --set port=${javafirst[port]} \
   --set otelServiceName=${javafirst[name]} \
   --set otelExporterOtlpEndpoint=${otelcollector[grpcEndpoint]} \
@@ -255,6 +260,7 @@ helm upgrade ${javasecond[name]} \
   --set dockerhubName=$DOCKERHUB_NAME \
   --set name=${javasecond[name]} \
   --set namespace=${javasecond[namespace]} \
+  --set replicas=${javasecond[replicas]} \
   --set port=${javasecond[port]} \
   --set otelServiceName=${javasecond[name]} \
   --set otelExporterOtlpEndpoint=${otelcollector[grpcEndpoint]} \
@@ -275,6 +281,7 @@ helm upgrade ${dotnetfirst[name]} \
   --set dockerhubName=$DOCKERHUB_NAME \
   --set name=${dotnetfirst[name]} \
   --set namespace=${dotnetfirst[namespace]} \
+  --set replicas=${dotnetfirst[replicas]} \
   --set port=${dotnetfirst[port]} \
   --set portPrometheus=${dotnetfirst[portPrometheus]} \
   --set otelServiceName=${dotnetfirst[name]} \
@@ -291,6 +298,7 @@ helm upgrade ${dotnetsecond[name]} \
   --set dockerhubName=$DOCKERHUB_NAME \
   --set name=${dotnetsecond[name]} \
   --set namespace=${dotnetsecond[namespace]} \
+  --set replicas=${dotnetsecond[replicas]} \
   --set port=${dotnetsecond[port]} \
   --set portPrometheus=${dotnetsecond[portPrometheus]} \
   --set otelServiceName=${dotnetsecond[name]} \
