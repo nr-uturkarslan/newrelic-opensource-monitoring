@@ -145,9 +145,17 @@ docker push "${DOCKERHUB_NAME}/${dotnetsecond[name]}"
 ################################
 ### NGINX Ingress Controller ###
 ################################
-helm repo add nginx-stable https://helm.nginx.com/stable
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
-helm install nginx-ingress nginx-stable/nginx-ingress
+helm upgrade nginx-ingress \
+  --install \
+  --wait \
+  --debug \
+  --create-namespace \
+  --namespace "nginx" \
+  --set controller.service.annotations."service\.beta\.kubernetes\.io/azure-load-balancer-health-probe-request-path"=/healthz \
+  "ingress-nginx/ingress-nginx"
+#########
 
 ######################
 ### Otel Collector ###
