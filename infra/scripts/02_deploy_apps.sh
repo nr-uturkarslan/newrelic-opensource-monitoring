@@ -75,10 +75,18 @@ dotnetsecond["port"]=8080
 dotnetsecond["portPrometheus"]=5000
 
 ### Simulator ###
-declare -A simulator
-simulator["name"]="simulator"
-simulator["namespace"]="simulator"
-simulator["port"]=8080
+
+# Bash
+declare -A simulatorbash
+simulatorbash["name"]="simulatorbash"
+simulatorbash["namespace"]="simulator"
+simulatorbash["replicas"]=1
+
+# Go
+declare -A simulatorgo
+simulatorgo["name"]="simulatorgo"
+simulatorgo["namespace"]="simulator"
+simulatorgo["port"]=8080
 #########
 
 ####################
@@ -113,12 +121,20 @@ docker build \
   "../../apps/dotnet-second/dotnet-second/."
 docker push "${DOCKERHUB_NAME}/${dotnetsecond[name]}"
 
-# ### Simulator ###
+### Simulator ###
+
+# Bash
+docker build \
+  --tag "${DOCKERHUB_NAME}/${simulatorbash[name]}" \
+  "../../apps/simulator-bash/."
+docker push "${DOCKERHUB_NAME}/${simulatorbash[name]}"
+
+# # Go
 # docker build \
 #   --tag "${DOCKERHUB_NAME}/${simulator[name]}" \
 #   "../../apps/simulator-go/."
 # docker push "${DOCKERHUB_NAME}/${simulator[name]}"
-# #######
+#######
 
 # #############
 # ### Pixie ###
@@ -282,21 +298,36 @@ helm upgrade ${dotnetsecond[name]} \
   "../charts/dotnet-second"
 #########
 
-# #################
-# ### Simulator ###
-# #################
+#################
+### Simulator ###
+#################
 
-# # Simulator
-# helm upgrade ${simulator[name]} \
+# Bash
+helm upgrade ${simulatorbash[name]} \
+  --install \
+  --wait \
+  --debug \
+  --create-namespace \
+  --namespace ${simulatorbash[namespace]} \
+  --set dockerhubName=$DOCKERHUB_NAME \
+  --set name=${simulatorbash[name]} \
+  --set imageName=${simulatorbash[name]} \
+  --set namespace=${simulatorbash[namespace]} \
+  --set replicas=${simulatorbash[replicas]} \
+  "../charts/simulator-bash"
+#########
+
+# # Go
+# helm upgrade ${simulatorgo[name]} \
 #   --install \
 #   --wait \
 #   --debug \
 #   --create-namespace \
-#   --namespace ${simulator[namespace]} \
+#   --namespace ${simulatorgo[namespace]} \
 #   --set dockerhubName=$DOCKERHUB_NAME \
-#   --set name=${simulator[name]} \
-#   --set imageName=${simulator[name]} \
-#   --set namespace=${simulator[namespace]} \
-#   --set port=${simulator[port]} \
+#   --set name=${simulatorgo[name]} \
+#   --set imageName=${simulatorgo[name]} \
+#   --set namespace=${simulatorgo[namespace]} \
+#   --set port=${simulatorgo[port]} \
 #   "../charts/simulator-go"
 # #########
