@@ -31,31 +31,37 @@ REQUEST_INTERVAL=1
 
 nginxEndpoint="nginx-ingress-ingress-nginx-controller.nginx.svc.cluster.local:80"
 dotnetEndpoint="${nginxEndpoint}/dotnet/dotnet/second"
+dotnetEndpointError="${nginxEndpoint}/dotnet/dotnet/error"
 javaEndpoint="${nginxEndpoint}/java/second"
-errorEndpoint="${nginxEndpoint}/error"
+javaEndpointError="${nginxEndpoint}/java/error"
 
 # Start making requests
-loopCount=$(echo $(( $RANDOM % 2 + 1 )))
-dotnetCount=$(echo $(( $RANDOM % 3 + 1 )))
-javaCount=$(echo $(( $RANDOM % 3 + 1 )))
-errorCount=$(echo $(( $RANDOM % 2 )))
-
-for i in {1..$loopCount}
+while true
 do
-  for i in {1..$dotnetCount}
+
+  # Dotnet
+  dotnetCount=$(echo $(( $RANDOM % 3 + 1 )))
+  for i in $(eval echo "{1..$dotnetCount}")
   do
     createValue $dotnetEndpoint
   done
 
-  for i in {1..$javaCount}
+  errorCount=$(echo $(( $RANDOM % 2 )))
+  for i in $(eval echo "{1..$errorCount}")
+  do
+    createValue $dotnetEndpointError
+  done
+
+  # Java
+  javaCount=$(echo $(( $RANDOM % 3 + 1 )))
+  for i in $(eval echo "{1..$javaCount}")
   do
     createValue $javaEndpoint
   done
 
-  for i in {1..$errorCount}
+  errorCount=$(echo $(( $RANDOM % 2 )))
+  for i in $(eval echo "{1..$errorCount}")
   do
-    createValue $errorEndpoint
+    createValue $javaEndpointError
   done
 done
-
-exit 0
