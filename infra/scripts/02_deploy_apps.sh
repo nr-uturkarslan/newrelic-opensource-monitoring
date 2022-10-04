@@ -39,6 +39,11 @@ declare -A fluentbit
 fluentbit["name"]="fluentbit"
 fluentbit["namespace"]="monitoring"
 
+# Node Exporter
+declare -A nodexporter
+nodexporter["name"]="nodexporter"
+nodexporter["namespace"]="monitoring"
+
 # Prometheus
 declare -A prometheus
 prometheus["name"]="prometheus"
@@ -207,6 +212,19 @@ helm upgrade ${fluentbit[name]} \
   --namespace ${fluentbit[namespace]} \
   --set namespace=${fluentbit[namespace]} \
   "../charts/fluentbit"
+#########
+
+#####################
+### Node Exporter ###
+#####################
+helm upgrade node-exporter \
+  --install \
+  --wait \
+  --debug \
+  --create-namespace \
+  --namespace ${nodexporter[namespace]} \
+  --set namespace=${nodexporter[namespace]} \
+  "../charts/node-exporter"
 #########
 
 ##################
