@@ -34,7 +34,7 @@ resource "azurerm_kubernetes_cluster" "platform" {
 resource "azurerm_kubernetes_cluster_node_pool" "general" {
   name                  = "general"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.platform.id
-  vm_size               = "Standard_DS2_v2"
+  vm_size               = "Standard_D2_v2"
 
   orchestrator_version = var.kubernetes_version
 
