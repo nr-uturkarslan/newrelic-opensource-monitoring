@@ -214,37 +214,21 @@ helm upgrade ${fluentbit[name]} \
   "../charts/fluentbit"
 #########
 
-#####################
-### Node Exporter ###
-#####################
-helm upgrade node-exporter \
-  --install \
-  --wait \
-  --debug \
-  --create-namespace \
-  --namespace ${nodexporter[namespace]} \
-  --set namespace=${nodexporter[namespace]} \
-  "../charts/node-exporter"
-#########
-
 ##################
 ### Prometheus ###
 ##################
 
-## To parse a namespace, use the lines below
-# --set server.remoteWrite[0].write_relabel_configs[0].source_labels[0]="namespace" \
-# --set server.remoteWrite[0].write_relabel_configs[0].regex="(${javafirst[namespace]}|${javasecond[namespace]})" \
-# --set server.remoteWrite[0].write_relabel_configs[0].action="keep" \
-
-helm dependency update "../charts/prometheus"
+# Install / upgrade Helm deployment
 helm upgrade prometheus \
   --install \
   --wait \
   --debug \
   --create-namespace \
-  --namespace ${prometheus[namespace]} \
-  --set namespace=${prometheus[namespace]} \
-  --set server.remoteWrite[0].url="https://metric-api.eu.newrelic.com/prometheus/v1/write?prometheus_server=${prometheus[name]}" \
+  --namespace $namespacePrometheus \
+  --set kubeStateMetrics.enabled=true \
+  --set nodeExporter.enabled=true \
+  --set newrelic.scrape_case="nodes_and_namespaces" \
+  --set server.remoteWrite[0].url=$newrelicPrometheusEndpointEu \
   --set server.remoteWrite[0].bearer_token=$NEWRELIC_LICENSE_KEY \
   "../charts/prometheus"
 
