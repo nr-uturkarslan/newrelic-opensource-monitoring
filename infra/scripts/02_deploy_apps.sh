@@ -48,6 +48,7 @@ nodexporter["namespace"]="monitoring"
 declare -A prometheus
 prometheus["name"]="prometheus"
 prometheus["namespace"]="monitoring"
+prometheus["newrelicEndpoint"]="https://metric-api.eu.newrelic.com/prometheus/v1/write?prometheus_server=${clusterName}"
 
 ### Java ###
 
@@ -219,16 +220,18 @@ helm upgrade ${fluentbit[name]} \
 ##################
 
 # Install / upgrade Helm deployment
-helm upgrade prometheus \
+helm upgrade ${prometheus[name]} \
   --install \
   --wait \
   --debug \
   --create-namespace \
-  --namespace $namespacePrometheus \
+  --namespace ${prometheus[namespace]} \
   --set kubeStateMetrics.enabled=true \
   --set nodeExporter.enabled=true \
+  --set nodeExporter.tolerations[0].effect="NoSchedule" \
+  --set nodeExporter.tolerations[0].operator="Exists" \
   --set newrelic.scrape_case="nodes_and_namespaces" \
-  --set server.remoteWrite[0].url=$newrelicPrometheusEndpointEu \
+  --set server.remoteWrite[0].url=${prometheus[newrelicEndpoint]} \
   --set server.remoteWrite[0].bearer_token=$NEWRELIC_LICENSE_KEY \
   "../charts/prometheus"
 
