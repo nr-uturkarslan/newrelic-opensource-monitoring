@@ -34,6 +34,7 @@
     <None Remove="OpenTelemetry.Instrumentation.Http" />
     <None Remove="Logging\" />
     <None Remove="Commons\Exceptions\" />
+    <None Remove="Services\ErrorService\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
@@ -43,5 +44,6 @@
     <Folder Include="Commons\" />
     <Folder Include="Logging\" />
     <Folder Include="Commons\Exceptions\" />
+    <Folder Include="Services\ErrorService\" />
   </ItemGroup>
 </Project>

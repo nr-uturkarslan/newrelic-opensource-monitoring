@@ -5,6 +5,7 @@ using dotnet_first.Dtos;
 using dotnet_first.Logging;
 using dotnet_first.Services.DotnetSecondService;
 using dotnet_first.Services.DotnetSecondService.Dtos;
+using dotnet_first.Services.ErrorService;
 using Microsoft.AspNetCore.Mvc;
 using OpenTelemetry.Resources;
 
@@ -15,14 +16,17 @@ namespace dotnet_first.Controllers;
 public class DotnetFirstController : ControllerBase
 {
     private readonly IDotnetSecondService _dotnetSecondService;
+    private readonly IErrorService _errorService;
 
     private readonly ActivitySource _source;
 
     public DotnetFirstController(
-        IDotnetSecondService dotnetSecondService
+        IDotnetSecondService dotnetSecondService,
+        IErrorService errorService
     )
     {
         _dotnetSecondService = dotnetSecondService;
+        _errorService = errorService;
 
         _source = new ActivitySource(Constants.OTEL_SERVICE_NAME);
     }
@@ -39,6 +43,24 @@ public class DotnetFirstController : ControllerBase
         LogFirstDotnetServiceTriggered(activity);
 
         var response = await _dotnetSecondService.Run(requestDto);
+
+        LogFirstDotnetServiceFinished(activity);
+
+        return response;
+    }
+
+    [HttpPost(Name = "error")]
+    [Route("error")]
+    public ResponseDto<CreateValueResponseDto> ErrorMethod(
+        [FromQuery] string errorType
+    )
+    {
+        // Create span
+        using var activity = _source.StartActivity($"{nameof(DotnetFirstController)}.{nameof(ErrorMethod)}");
+
+        LogFirstDotnetServiceTriggered(activity);
+
+        var response = _errorService.Run(errorType);
 
         LogFirstDotnetServiceFinished(activity);
 

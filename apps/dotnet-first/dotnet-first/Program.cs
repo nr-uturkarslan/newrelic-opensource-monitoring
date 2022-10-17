@@ -1,5 +1,6 @@
 ﻿using dotnet_first.Commons;
 using dotnet_first.Services.DotnetSecondService;
+using dotnet_first.Services.ErrorService;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Prometheus;
@@ -44,6 +45,7 @@ builder.Services.AddOpenTelemetryTracing(b =>
 
 // Services
 builder.Services.AddSingleton<IDotnetSecondService, DotnetSecondService>();
+builder.Services.AddSingleton<IErrorService, ErrorService>();
 
 // Controllers
 builder.Services.AddControllers();
