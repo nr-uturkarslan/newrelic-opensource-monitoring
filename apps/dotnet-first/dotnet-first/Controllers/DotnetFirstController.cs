@@ -49,10 +49,10 @@ public class DotnetFirstController : ControllerBase
         return response;
     }
 
-    [HttpPost(Name = "error")]
+    [HttpGet(Name = "error")]
     [Route("error")]
-    public ResponseDto<CreateValueResponseDto> ErrorMethod(
-        [FromQuery] string errorType
+    public ObjectResult ErrorMethod(
+        [FromQuery] string errorType = "500"
     )
     {
         // Create span

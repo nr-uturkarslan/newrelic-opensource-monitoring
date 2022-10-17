@@ -6,12 +6,13 @@ using System.Diagnostics;
 using dotnet_first.Logging;
 using OpenTelemetry.Resources;
 using dotnet_first.Commons;
+using Microsoft.AspNetCore.Mvc;
 
 namespace dotnet_first.Services.ErrorService;
 
 public interface IErrorService
 {
-    ResponseDto<CreateValueResponseDto> Run(
+    ObjectResult Run(
         string errorType
     );
 }
@@ -25,7 +26,7 @@ public class ErrorService : IErrorService
         _source = new ActivitySource(Constants.OTEL_SERVICE_NAME);
     }
 
-    public ResponseDto<CreateValueResponseDto> Run(
+    public ObjectResult Run(
         string errorType
     )
     {
@@ -36,17 +37,22 @@ public class ErrorService : IErrorService
         {
             case "wait":
                 return Wait(activity);
+            case "cpu":
+                return Cpu(activity);
+            case "mem":
+                return Mem(activity);
             default:
                 return InternalServerError(activity);
         }
     }
 
-    public ResponseDto<CreateValueResponseDto> Wait(
+    public ObjectResult Wait(
         Activity activity
     )
     {
         var message = "Everything's fine.";
 
+        Thread.Sleep(3000);
         CustomLogger.Run(
             new CustomLog
             {
@@ -58,15 +64,17 @@ public class ErrorService : IErrorService
                 SpanId = activity?.SpanId.ToString(),
             });
 
-        return new ResponseDto<CreateValueResponseDto>
+        var result = new ObjectResult(new ResponseDto<CreateValueResponseDto>
         {
             Message = message,
             StatusCode = HttpStatusCode.OK,
             Data = null,
-        };
+        });
+        result.StatusCode = (int)HttpStatusCode.OK;
+        return result;
     }
 
-    public ResponseDto<CreateValueResponseDto> Cpu(
+    public ObjectResult Cpu(
         Activity activity
     )
     {
@@ -90,15 +98,17 @@ public class ErrorService : IErrorService
                 SpanId = activity?.SpanId.ToString(),
             });
 
-        return new ResponseDto<CreateValueResponseDto>
+        var result = new ObjectResult(new ResponseDto<CreateValueResponseDto>
         {
             Message = message,
             StatusCode = HttpStatusCode.OK,
             Data = null,
-        };
+        });
+        result.StatusCode = (int)HttpStatusCode.OK;
+        return result;
     }
 
-    public ResponseDto<CreateValueResponseDto> Mem(
+    public ObjectResult Mem(
         Activity activity
     )
     {
@@ -117,15 +127,17 @@ public class ErrorService : IErrorService
                 SpanId = activity?.SpanId.ToString(),
             });
 
-        return new ResponseDto<CreateValueResponseDto>
+        var result = new ObjectResult(new ResponseDto<CreateValueResponseDto>
         {
             Message = message,
             StatusCode = HttpStatusCode.OK,
             Data = null,
-        };
+        });
+        result.StatusCode = (int)HttpStatusCode.OK;
+        return result;
     }
 
-    public ResponseDto<CreateValueResponseDto> InternalServerError(
+    public ObjectResult InternalServerError(
         Activity activity
     )
     {
@@ -142,12 +154,14 @@ public class ErrorService : IErrorService
                 SpanId = activity?.SpanId.ToString(),
             });
 
-        return new ResponseDto<CreateValueResponseDto>
+        var result = new ObjectResult(new ResponseDto<CreateValueResponseDto>
         {
             Message = message,
             StatusCode = HttpStatusCode.InternalServerError,
             Data = null,
-        };
+        });
+        result.StatusCode = (int)HttpStatusCode.OK;
+        return result;
     }
 }
 
