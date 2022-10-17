@@ -50,14 +50,14 @@ public class ErrorService : IErrorService
         Activity activity
     )
     {
-        var message = "Everything's fine.";
+        var message = "Remove Thread.Sleep() in the next commit.";
 
         Thread.Sleep(3000);
         CustomLogger.Run(
             new CustomLog
             {
                 ClassName = nameof(ErrorService),
-                MethodName = nameof(InternalServerError),
+                MethodName = nameof(Wait),
                 LogLevel = CustomLogLevel.INFO,
                 Message = message,
                 TraceId = activity?.TraceId.ToString(),
@@ -78,20 +78,24 @@ public class ErrorService : IErrorService
         Activity activity
     )
     {
-        var message = "Everything's fine.";
+        var message = "Looping over 200000000 elements asynchronously...";
 
-        var total = 0.0;
-        for (var counter = 0; counter < 1000000; ++counter)
+        Task.Run(() =>
         {
-            var temp = Math.Pow(counter, 5) * Math.Sqrt(counter);
-            total += temp;
-        }
+            var total = 0.0;
+            for (var counter = 0; counter < 200000000; ++counter)
+            {
+                var temp = Math.Pow(counter, 5) / Math.Sqrt(counter) + Math.Sqrt(counter) +
+                    Math.Pow(counter, 3);
+                total += temp;
+            }
+        });
 
         CustomLogger.Run(
             new CustomLog
             {
                 ClassName = nameof(ErrorService),
-                MethodName = nameof(InternalServerError),
+                MethodName = nameof(Cpu),
                 LogLevel = CustomLogLevel.INFO,
                 Message = message,
                 TraceId = activity?.TraceId.ToString(),
@@ -112,15 +116,22 @@ public class ErrorService : IErrorService
         Activity activity
     )
     {
-        var message = "Everything's fine.";
+        var message = "Starting Google Chrome...";
 
-        var array = new double[1000000000];
+        Task.Run(() =>
+        {
+            var array = new double[10000000000];
+            for (var counter = 0; counter < array.Length; ++counter)
+            {
+                array[counter] = Double.MaxValue;
+            }
+        });
 
         CustomLogger.Run(
             new CustomLog
             {
                 ClassName = nameof(ErrorService),
-                MethodName = nameof(InternalServerError),
+                MethodName = nameof(Mem),
                 LogLevel = CustomLogLevel.INFO,
                 Message = message,
                 TraceId = activity?.TraceId.ToString(),
@@ -160,7 +171,7 @@ public class ErrorService : IErrorService
             StatusCode = HttpStatusCode.InternalServerError,
             Data = null,
         });
-        result.StatusCode = (int)HttpStatusCode.OK;
+        result.StatusCode = (int)HttpStatusCode.InternalServerError;
         return result;
     }
 }
