@@ -31,9 +31,9 @@ REQUEST_INTERVAL=1
 
 nginxEndpoint="nginx-ingress-ingress-nginx-controller.nginx.svc.cluster.local:80"
 dotnetEndpoint="${nginxEndpoint}/dotnet/dotnet/second"
-dotnetEndpointError="${nginxEndpoint}/dotnet/dotnet/error"
+dotnetEndpointError="${nginxEndpoint}/dotnet/dotnet/nginx"
 javaEndpoint="${nginxEndpoint}/java/second"
-javaEndpointError="${nginxEndpoint}/java/error"
+javaEndpointError="${nginxEndpoint}/java/nginx"
 
 # Start making requests
 while true
