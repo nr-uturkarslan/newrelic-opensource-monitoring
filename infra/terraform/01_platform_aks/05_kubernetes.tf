@@ -22,7 +22,7 @@ resource "azurerm_kubernetes_cluster" "platform" {
     enable_auto_scaling = true
     node_count          = 1
     min_count           = 1
-    max_count           = 2
+    max_count           = 1
   }
 
   identity {
@@ -43,7 +43,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "general" {
   }
 
   enable_auto_scaling = true
-  node_count          = 1
-  min_count           = 1
-  max_count           = 3
+  node_count          = 2
+  min_count           = 2
+  max_count           = 5
 }
